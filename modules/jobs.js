@@ -73,7 +73,7 @@ function safeFireJob(job, amount) {
 }
 
 function buyJobs() {
-    var freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
+    var freeWorkers = Math.ceil(game.resources.trimps.owned / 2) - game.resources.trimps.employed;
     var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
     var totalDistributableWorkers = freeWorkers + game.jobs.Farmer.owned + game.jobs.Miner.owned + game.jobs.Lumberjack.owned;
     var farmerRatio = parseFloat(getPageSetting('FarmerRatio'));
@@ -81,12 +81,6 @@ function buyJobs() {
     var minerRatio = parseFloat(getPageSetting('MinerRatio'));
     var totalRatio = farmerRatio + lumberjackRatio + minerRatio;
     var scientistRatio = totalRatio / MODULES["jobs"].scientistRatio;
-    if (game.jobs.Farmer.owned < 100) {
-        scientistRatio = totalRatio / MODULES["jobs"].scientistRatio2;
-    }
-    if (game.global.world >= 300) {
-        scientistRatio = totalRatio / MODULES["jobs"].scientistRatio3;
-    }
 
     if (game.global.world == 1 && game.global.totalHeliumEarned <= 5000) {
         if (game.resources.trimps.owned < game.resources.trimps.realMax() * 0.9) {
@@ -122,7 +116,7 @@ function buyJobs() {
             } else
                 return;
         }
-    } else {
+    } /*else {
         var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
         if (!(game.global.challengeActive == "Trapper") && game.resources.trimps.owned < game.resources.trimps.realMax() * 0.9 && !breedFire) {
             if (breeding > game.resources.trimps.realMax() * 0.33) {
@@ -135,7 +129,7 @@ function buyJobs() {
             }
             return;
         }
-    }
+    }*/
     var subtract = 0;
 
     function checkFireandHire(job, amount) {
@@ -169,18 +163,24 @@ function buyJobs() {
         if (!game.buildings.Tribute.locked) {
             var curtrainercost = game.jobs.Trainer.cost.food[0] * Math.pow(game.jobs.Trainer.cost.food[1], game.jobs.Trainer.owned);
             var curtributecost = getBuildingItemPrice(game.buildings.Tribute, "food", false, 1) * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level);
-            if (curtrainercost < curtributecost)
+            if (curtrainercost * 2 < curtributecost)
                 checkFireandHire('Trainer');
         } else
             checkFireandHire('Trainer');
     }
     if (getPageSetting('MaxExplorers') > game.jobs.Explorer.owned || getPageSetting('MaxExplorers') == -1) {
-        checkFireandHire('Explorer');
+		if (!game.buildings.Tribute.locked) {
+            var curexplorercost = game.jobs.Explorer.cost.food[0] * Math.pow(game.jobs.Explorer.cost.food[1], game.jobs.Explorer.owned);
+            var curtributecost = getBuildingItemPrice(game.buildings.Tribute, "food", false, 1) * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level);
+            if (curexplorercost * 20 < curtributecost)
+                checkFireandHire('Explorer');
+        } else
+            checkFireandHire('Explorer');
     }
 
     function ratiobuy(job, jobratio) {
         if (!game.jobs[job].locked && !breedFire) {
-            freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
+            freeWorkers = Math.ceil(game.resources.trimps.owned / 2) - game.resources.trimps.employed;
             totalDistributableWorkers = freeWorkers + game.jobs.Farmer.owned + game.jobs.Miner.owned + game.jobs.Lumberjack.owned;
             var toBuy = Math.floor((jobratio / totalRatio) * totalDistributableWorkers) - game.jobs[job].owned - subtract;
             var canBuy = Math.floor(game.resources.trimps.owned - game.resources.trimps.employed);
