@@ -60,37 +60,41 @@ function safeBuyBuilding(building) {
 }
 
 function buyFoodEfficientHousing() {
-    var foodHousing = ["Hut", "House", "Mansion", "Hotel", "Resort"];
+    var foodHousing = ["Hut", "House", "Mansion", "Hotel"];
+	var foodCost = {"Hut":Infinity,"House":Infinity,"Mansion":Infinity,"Hotel":Infinity}
     var unlockedHousing = [];
     for (var house in foodHousing) {
         if (game.buildings[foodHousing[house]].locked === 0) {
             unlockedHousing.push(foodHousing[house]);
         }
     }
-    var buildorder = [];
     for (var house in unlockedHousing) {
         var building = game.buildings[unlockedHousing[house]];
         var cost = getBuildingItemPrice(building, "food", false, 1);
-        var ratio = cost / building.increase.by;
-        buildorder.push({
-            'name': unlockedHousing[house],
-            'ratio': ratio
-        });
+		foodCost[building] = cost;
         document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
     }
-    buildorder.sort(function (a, b) {
-        return a.ratio - b.ratio;
-    });
-    var bestfoodBuilding = null;
-    var bb = buildorder[0];
-    var max = getPageSetting('Max' + bb.name);
-    if (game.buildings[bb.name].owned < max || max == -1) {
-        bestfoodBuilding = bb.name;
+	var bestfoodBuilding = null;
+	if ( foodCost["Hut"] * 2 < foodCost["House"] && foodCost["Hut"] * 4 < foodCost["Mansion"] && foodCost["Hut"] * 8 < foodCost["Hotel"])
+    {
+    	bestfoodBuilding = 'Hut';
     }
-    if (bestfoodBuilding) {
+    if (foodCost["House"] * 2 < foodCost["Mansion"] && foodCost["House"] * 4 < foodCost["Hotel"])
+    {
+    	bestfoodBuilding = 'House';
+    }
+    if (foodCost["Mansion"] * 2 < foodCost["Hotel"])
+    {
+    	bestfoodBuilding = 'Mansion';
+    }
+    if (bestfoodBuilding && (game.buildings[bestfoodBuilding].owned < max || max == -1)) {
         document.getElementById(bestfoodBuilding).style.border = "1px solid #00CC01";
         safeBuyBuilding(bestfoodBuilding);
     }
+	else
+	{
+		bestfoodBuilding = null;
+	}
 }
 
 function buyGemEfficientHousing() {
