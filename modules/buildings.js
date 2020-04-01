@@ -71,7 +71,7 @@ function buyFoodEfficientHousing() {
     for (var house in unlockedHousing) {
         var building = game.buildings[unlockedHousing[house]];
         var cost = getBuildingItemPrice(building, "food", false, 1);
-		foodCost[building] = cost;
+	foodCost[unlockedHousing[house]] = cost;
         document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
     }
 	var bestfoodBuilding = null;
