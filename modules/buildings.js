@@ -87,7 +87,7 @@ function buyFoodEfficientHousing() {
     {
     	bestfoodBuilding = 'Mansion';
     }
-	var max = (bestfoodBuilding ? getPageSetting('Max' + bestfoodBuilding) : 0;
+	var max = (bestfoodBuilding ? getPageSetting('Max' + bestfoodBuilding) : 0);
     if (bestfoodBuilding && (game.buildings[bestfoodBuilding].owned < max || max == -1)) {
         document.getElementById(bestfoodBuilding).style.border = "1px solid #00CC01";
         safeBuyBuilding(bestfoodBuilding);
