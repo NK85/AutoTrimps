@@ -665,12 +665,12 @@ AutoPerks.ArithmeticPerk = function(name, base, increase, baseIncrease, value, m
 AutoPerks.initializePerks = function () {
     //fixed
     var siphonology = new AutoPerks.FixedPerk("siphonology", 100000, 10, 3);
-    var anticipation = new AutoPerks.FixedPerk("anticipation", 1000, 1000, 10);
+    var anticipation = new AutoPerks.FixedPerk("anticipation", 1000, 100, 10);
     var meditation = new AutoPerks.FixedPerk("meditation", 75, 1000, 7);
     var bait = new AutoPerks.FixedPerk("bait", 4, 1000);
     var trumps = new AutoPerks.FixedPerk("trumps", 3, 1000);
     var packrat = new AutoPerks.FixedPerk("packrat", 3, 1000);
-	var overkill = new AutoPerks.FixedPerk("overkill", 1000000, 100, 30);
+	var overkill = new AutoPerks.FixedPerk("overkill", 1000000, 20, 30);
     //variable
 	var agility = new AutoPerks.VariablePerk("agility", 4, true,                0.5, 5.26315789473684210526315789474, 20);
 	var range = new AutoPerks.VariablePerk("range", 1, true,                    1, 1, 10);
