@@ -303,7 +303,7 @@ AutoPerks.calculateIncrease = function(perk, level) {
 		return increase * value;
 	}
 	else if(perk.name == "coordinated") {
-		increase = AutoPerks.getCoordIncrease(level);
+		increase = AutoPerks.getCoordIncrease(level+1);
 		return increase * perk.value;
 	}
 	else if(perk.name == "carpentry_II") {
