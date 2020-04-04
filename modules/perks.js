@@ -217,9 +217,9 @@ AutoPerks.updatePerkRatios = function() {
 }
 
 AutoPerks.initialise = function() {
-    AutoPerks.saveCustomRatios();
+    //AutoPerks.saveCustomRatios();
     AutoPerks.initializePerks();
-    AutoPerks.updatePerkRatios();
+    //AutoPerks.updatePerkRatios();
 }
 
 AutoPerks.clickAllocate = function() {
@@ -696,7 +696,7 @@ AutoPerks.initializePerks = function () {
         AutoPerks.perkHolder[i].updatedValue = AutoPerks.perkHolder[i].value;
     }
     AutoPerks.setPerksByName();
-    AutoPerks.setDefaultRatios();      
+    //AutoPerks.setDefaultRatios();      
 }
 
 AutoPerks.getFixedPerks = function() {
