@@ -328,11 +328,11 @@ AutoPerks.getCritIncrease = function(level) {
 	
 AutoPerks.getCoordIncrease = function(level) {
 	var rt = [1,1];
-	var z = game.global.highestLevelCleared * 0.8;
+	var z = Math.floor(game.global.highestLevelCleared * 0.8);
 	for (var i = 0; i < z; i++)
 	{
-		rt[0] = Math.ceil(rt[0] + ((rt[0] * 0.25) * 0.98^(level-1)))
-		rt[1] = Math.ceil(rt[1] + ((rt[1] * 0.25) * 0.98^level))
+		rt[0] = Math.ceil(rt[0] + ((rt[0] * 0.25) * Math.pow(0.98, (level-1)) ))
+		rt[1] = Math.ceil(rt[1] + ((rt[1] * 0.25) * Math.pow(0.98, level) ))
 	}
 	rt[0] *= 100
    	return rt[0] / rt[1] - 100
