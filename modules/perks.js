@@ -375,19 +375,25 @@ AutoPerks.spendHelium = function(helium) {
     }
 
     var i=0;
+	var stuck = false;
 	while (!effQueue.isEmpty()) {
 		i++;
 		mostEff = effQueue.poll();
 		if(mostEff.level < mostEff.max && mostEff.price <= helium) {
-            helium -= mostEff.price;
-            mostEff.level++;
-            mostEff.spent += mostEff.price;
-            price = AutoPerks.calculatePrice(mostEff, mostEff.level);
-            inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
-            mostEff.efficiency = inc / price;
+			helium -= mostEff.price;
+			mostEff.level++;
+			mostEff.spent += mostEff.price;
+			price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+			inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
+			mostEff.efficiency = inc / price;
 			mostEff.price = price;
-            effQueue.add(mostEff);
-        }
+			effQueue.add(mostEff);
+			stuck = false;
+		}
+		else if(effQueue.size == 1) {
+			if(stuck) break;
+			stuck = true;
+		}
 	}
     debug("AutoPerks1: Pass One Complete. Loops ran: " + i, "perks");
 
