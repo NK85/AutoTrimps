@@ -375,12 +375,10 @@ AutoPerks.spendHelium = function(helium) {
     }
 
     var i=0;
-    function iterateQueue() {
-        mostEff = effQueue.poll();
-        i++;
-    }
-    for (iterateQueue() ; !effQueue.isEmpty() ; iterateQueue() ) {
-        if(mostEff.level < mostEff.max && mostEff.price <= helium) {
+	while (!effQueue.isEmpty()) {
+		i++;
+		mostEff = effQueue.poll();
+		if(mostEff.level < mostEff.max && mostEff.price <= helium) {
             helium -= mostEff.price;
             mostEff.level++;
             mostEff.spent += mostEff.price;
@@ -390,7 +388,7 @@ AutoPerks.spendHelium = function(helium) {
 			mostEff.price = price;
             effQueue.add(mostEff);
         }
-    }
+	}
     debug("AutoPerks1: Pass One Complete. Loops ran: " + i, "perks");
 
     /*var $selector = document.getElementById('dumpPerk');
