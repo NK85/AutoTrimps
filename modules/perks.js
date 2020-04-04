@@ -231,7 +231,7 @@ AutoPerks.clickAllocate = function() {
     for (var i in fixedPerks) {
 		fixedPerks[i].level = 0;
 		fixedPerks[i].spent = 0;
-		for (var price = AutoPerks.calculateTotalPrice(fixedPerks[i], fixedPerks[i].level); (fixedPerks[i].spent + price) <= (helium / fixedPerks[i].divisor); AutoPerks.calculateTotalPrice(fixedPerks[i], fixedPerks[i].level)) {
+		for (var price = AutoPerks.calculatePrice(fixedPerks[i], fixedPerks[i].level); (fixedPerks[i].spent + price) <= (helium / fixedPerks[i].divisor); price = AutoPerks.calculatePrice(fixedPerks[i], fixedPerks[i].level)) {
 			fixedPerks[i].level += 1;
 			fixedPerks[i].spent += price;
 			preSpentHe += price;
