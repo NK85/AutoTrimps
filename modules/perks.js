@@ -235,6 +235,7 @@ AutoPerks.clickAllocate = function() {
 			fixedPerks[i].level += 1;
 			fixedPerks[i].spent += price;
 			preSpentHe += price;
+			if (fixedPerks[i].level == fixedPerks[i].max) break;
 		}
     }
     if (preSpentHe)
@@ -666,9 +667,9 @@ AutoPerks.initializePerks = function () {
     var siphonology = new AutoPerks.FixedPerk("siphonology", 100000, 10, 3);
     var anticipation = new AutoPerks.FixedPerk("anticipation", 1000, 1000, 10);
     var meditation = new AutoPerks.FixedPerk("meditation", 75, 1000, 7);
-    var bait = new AutoPerks.FixedPerk("bait", 1000, 30);
-    var trumps = new AutoPerks.FixedPerk("trumps", 1000, 30);
-    var packrat = new AutoPerks.FixedPerk("packrat", 1000, 30);
+    var bait = new AutoPerks.FixedPerk("bait", 4, 1000);
+    var trumps = new AutoPerks.FixedPerk("trumps", 3, 1000);
+    var packrat = new AutoPerks.FixedPerk("packrat", 3, 1000);
 	var overkill = new AutoPerks.FixedPerk("overkill", 1000000, 100, 30);
     //variable
 	var agility = new AutoPerks.VariablePerk("agility", 4, true,                0.5, 5.26315789473684210526315789474, 20);
