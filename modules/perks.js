@@ -361,6 +361,9 @@ AutoPerks.spendHelium = function(helium) {
 		perks[i].price = price;
         if(perks[i].efficiency < 0) {
             debug("Perk ratios must be positive values.","perks");
+			debug(perks[i].name,"perks");
+			debug(price,"perks");
+			debug(inc,"perks");
             return false;
         }
         if(perks[i].efficiency != 0)
