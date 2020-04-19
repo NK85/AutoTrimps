@@ -81,11 +81,11 @@ function buyFoodEfficientHousing() {
     }
     if (foodCost["House"] * 2 < foodCost["Mansion"] && foodCost["House"] * 4 < foodCost["Hotel"])
     {
-    	bestfoodBuilding = 'House';
+    	if (bestfoodBuilding == null) bestfoodBuilding = 'House';
     }
     if (foodCost["Mansion"] * 2 < foodCost["Hotel"])
     {
-    	bestfoodBuilding = 'Mansion';
+    	if (bestfoodBuilding == null) bestfoodBuilding = 'Mansion';
     }
 	var max = (bestfoodBuilding ? getPageSetting('Max' + bestfoodBuilding) : 0);
     if (bestfoodBuilding && (game.buildings[bestfoodBuilding].owned < max || max == -1)) {
