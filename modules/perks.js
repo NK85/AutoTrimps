@@ -217,7 +217,7 @@ AutoPerks.updatePerkRatios = function() {
 }
 
 AutoPerks.initialise = function() {
-    //AutoPerks.saveCustomRatios();
+    AutoPerks.saveCustomRatios();
     AutoPerks.initializePerks();
     //AutoPerks.updatePerkRatios();
 }
@@ -300,7 +300,7 @@ AutoPerks.calculateIncrease = function(perk, level) {
 	}
 	else if(perk.name == "carpentry") {
 		increase = perk.baseIncrease;
-		value = (2 + ((1 / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
+		value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
 		return increase * value;
 	}
 	else if(perk.name == "coordinated") {
@@ -309,7 +309,7 @@ AutoPerks.calculateIncrease = function(perk, level) {
 	}
 	else if(perk.name == "carpentry_II") {
 		increase = (perk.baseIncrease / (1 + ((perk.baseIncrease / 100) * level)));
-		value = (2 + ((1 / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
+		value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
 		return increase * value;
 	}
     else if(perk.compounding) increase = perk.baseIncrease;
@@ -663,6 +663,22 @@ AutoPerks.ArithmeticPerk = function(name, base, increase, baseIncrease, value, m
 }
 
 AutoPerks.initializePerks = function () {
+	var $perkRatioBoxes = document.getElementsByClassName('perkRatios');
+    for(var i = 0; i < $perkRatioBoxes.length; i++) {
+        if ($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Power") {
+			AutoPerks.damageWeigth = parseFloat($perkRatioBoxes[i].value);
+		}
+		else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Resilience") {
+			AutoPerks.healthWeigth = parseFloat($perkRatioBoxes[i].value);
+		}
+		else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Motivation") {
+			AutoPerks.resourceWeigth = parseFloat($perkRatioBoxes[i].value);
+		}
+		else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Looting") {
+			AutoPerks.heliumWeigth = parseFloat($perkRatioBoxes[i].value);
+		}
+    }
+	AutoPerks.combatWeigth = AutoPerks.damageWeigth + AutoPerks.healthWeigth;
     //fixed
     var siphonology = new AutoPerks.FixedPerk("siphonology", 100000, 10, 3);
     var anticipation = new AutoPerks.FixedPerk("anticipation", 1000, 100, 10);
@@ -673,29 +689,29 @@ AutoPerks.initializePerks = function () {
 	var overkill = new AutoPerks.FixedPerk("overkill", 1000000, 20, 30);
     //variable
 	var agility = new AutoPerks.VariablePerk("agility", 4, true,                0.5, 5.26315789473684210526315789474, 20);
-	var range = new AutoPerks.VariablePerk("range", 1, true,                    1, 1, 10);
-	var relentlessness = new AutoPerks.VariablePerk("relentlessness", 75, true, 1, 0, 10);
-    var looting = new AutoPerks.VariablePerk("looting", 1, false,             	1, 5);
-    var toughness = new AutoPerks.VariablePerk("toughness", 1, false,         	1, 5);
-    var power = new AutoPerks.VariablePerk("power", 1, false,                 	1, 5);
-    var motivation = new AutoPerks.VariablePerk("motivation", 2, false,       	1, 5);
-    var pheromones = new AutoPerks.VariablePerk("pheromones", 3, false,       	0.5, 10);
-    var artisanistry = new AutoPerks.VariablePerk("artisanistry", 15, true,   	0.5, 6);
+	var range = new AutoPerks.VariablePerk("range", 1, true,                    AutoPerks.damageWeigth, 1, 10);
+	var relentlessness = new AutoPerks.VariablePerk("relentlessness", 75, true, AutoPerks.damageWeigth, 0, 10);
+    var looting = new AutoPerks.VariablePerk("looting", 1, false,             	AutoPerks.heliumWeigth, 5);
+    var toughness = new AutoPerks.VariablePerk("toughness", 1, false,         	AutoPerks.healthWeigth, 5);
+    var power = new AutoPerks.VariablePerk("power", 1, false,                 	AutoPerks.damageWeigth, 5);
+    var motivation = new AutoPerks.VariablePerk("motivation", 2, false,       	AutoPerks.resourceWeigth, 5);
+    var pheromones = new AutoPerks.VariablePerk("pheromones", 3, false,       	AutoPerks.healthWeigth / 2, 10);
+    var artisanistry = new AutoPerks.VariablePerk("artisanistry", 15, true,   	AutoPerks.combatWeigth / 4, 6);
     var carpentry = new AutoPerks.VariablePerk("carpentry", 25, true,         	0, 10);
-    var resilience = new AutoPerks.VariablePerk("resilience", 100, true,      	1, 10);
-    var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true, 	2, 0);
-    var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,  	0.5, 6);
+    var resilience = new AutoPerks.VariablePerk("resilience", 100, true,      	AutoPerks.healthWeigth, 10);
+    var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true, 	AutoPerks.combatWeigth, 0);
+    var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,  	AutoPerks.resourceWeigth / 2, 6);
     //fluffy
     var capable = new AutoPerks.FixedPerk("capable", 100000000, 100, 10, "fluffy");
     var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, false,      11, 0.05);
     var curious = new AutoPerks.VariablePerk("curious", 100000000000000, false,   12, 0.05);
     var classy = new AutoPerks.VariablePerk("classy", 100000000000000000, false,   13, 0.05, 75);
     //tier2
-    var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 1, 1);
-    var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 1, 1);
-    var motivation_II = new AutoPerks.ArithmeticPerk("motivation_II", 50000, 1000, 1, 1);
+    var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 1, AutoPerks.healthWeigth);
+    var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 1, AutoPerks.damageWeigth);
+    var motivation_II = new AutoPerks.ArithmeticPerk("motivation_II", 50000, 1000, 1, AutoPerks.resourceWeigth);
     var carpentry_II = new AutoPerks.ArithmeticPerk("carpentry_II", 100000, 10000, 0.25, 0);
-    var looting_II = new AutoPerks.ArithmeticPerk("looting_II", 100000, 10000, 0.25, 1);
+    var looting_II = new AutoPerks.ArithmeticPerk("looting_II", 100000, 10000, 0.25, AutoPerks.heliumWeigth);
 
     AutoPerks.perkHolder = [siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, looting, toughness, power, motivation, pheromones, artisanistry, carpentry, resilience, coordinated, resourceful, overkill, capable, cunning, curious, classy, toughness_II, power_II, motivation_II, carpentry_II, looting_II];
     for(var i in AutoPerks.perkHolder) {
@@ -712,6 +728,18 @@ AutoPerks.getFixedPerks = function() {
 }
 AutoPerks.getVariablePerks = function() {
     return AutoPerks.getSomePerks(null,true);
+}
+AutoPerks.getVariablePerks2 = function() {
+    var perks = [];
+    for(var i in AutoPerks.perkHolder) {
+        var name = AutoPerks.capitaliseFirstLetter(AutoPerks.perkHolder[i].name);
+        var perk = game.portal[name];
+        if(perk.locked || (typeof perk.level === 'undefined')) continue;
+        if (!AutoPerks.perkHolder[i].fixed && AutoPerks.perkHolder[i].type != "linear") {
+		perks.push(AutoPerks.perkHolder[i]);    
+	}
+    }
+    return perks;
 }
 AutoPerks.getTierIIPerks = function() {
     return AutoPerks.getSomePerks(null,null,true);
