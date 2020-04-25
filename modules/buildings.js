@@ -136,6 +136,10 @@ function buyGemEfficientHousing() {
                 if (getBuildingItemPrice(game.buildings.Warpstation, "metal", false, 1) * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) > (game.resources.metal.owned / warpwallpct))
                     skipWarp = true;
             }
+			if (getPageSetting('MaxWarpstations') >= 0 && getPageSetting('MaxWarpstations') <= game.buildings.Warpstation.owned)
+				skipWarp = true;
+			if (getPageSetting('WarpstationsZ') >= 0 && game.global.world >= getPageSetting('WarpstationsZ'))
+				skipWarp = true;
             if (skipWarp)
                 bestBuilding = null;
             var getcoord = getPageSetting('WarpstationCoordBuy');
@@ -208,7 +212,10 @@ function buyBuildings() {
     }
     //Nurseries
     if (game.buildings.Nursery.locked == 0 && (!hidebuild &&( game.global.world >= getPageSetting('NoNurseriesUntil') || getPageSetting('NoNurseriesUntil') < 1) && (getPageSetting('MaxNursery') > game.buildings.Nursery.owned || getPageSetting('MaxNursery') == -1)) || (game.global.challengeActive != "Daily" && getPageSetting('PreSpireNurseries') > game.buildings.Nursery.owned && isActiveSpireAT()) || (game.global.challengeActive == "Daily" && getPageSetting('dPreSpireNurseries') > game.buildings.Nursery.owned && disActiveSpireAT())) {
-	safeBuyBuilding('Nursery');
+		var strongestAttack = getEnemyMaxAttack(game.global.world,100,'Improbability',0,0) * getCorruptScale("attack");
+		var nurseryRatio = game.global.soldierHealthMax / strongestAttack;
+		if(getPageSetting('NurseryRatio') == -1 || nurseryRatio < getPageSetting('NurseryRatio'))
+			safeBuyBuilding('Nursery');
     }
 
     postBuy2(oldBuy);
