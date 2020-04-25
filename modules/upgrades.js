@@ -33,8 +33,20 @@ function buyUpgrades() {
 
 	//Other
         if (upgrade == 'Shieldblock' && !getPageSetting('BuyShieldblock')) continue;
-        if (upgrade == 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('FirstGigastation'))) continue;
-        if (upgrade == 'Bloodlust' && game.global.challengeActive == 'Scientist' && getPageSetting('BetterAutoFight')) continue;
+        if (upgrade == 'Gigastation' && !fuckbuildinggiga && getPageSetting('GigastationTarget') == -1 && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('FirstGigastation'))) continue;
+        if (upgrade == 'Gigastation' && getPageSetting('GigastationTarget') >= 0) {
+		var gigaAmt = 0;
+		var gigaTarget = getPageSetting('GigastationTarget');
+		gigaAmt += Math.floor((gigaTarget - 60) > 10 ? 10 : ((gigaTarget - 60) > 0 ? (gigaTarget - 60) : 0));
+		gigaAmt += Math.floor(((gigaTarget - 70) / 2) > 4 ? 4 : (((gigaTarget - 70) / 2) > 0 ? ((gigaTarget - 70) / 2) : 0));
+		gigaAmt += Math.floor(((gigaTarget - 78) / 3) > 4 ? 4 : (((gigaTarget - 78) / 3) > 0 ? ((gigaTarget - 78) / 3) : 0));
+		gigaAmt += Math.floor(((gigaTarget - 90) / 5) > 16 ? 16 : (((gigaTarget - 90) / 5) > 0 ? ((gigaTarget - 90) / 5) : 0));
+		gigaAmt += Math.floor(((gigaTarget - 170) / 10) > 5 ? 5 : (((gigaTarget - 170) / 10) > 0 ? ((gigaTarget - 170) / 10) : 0));
+		var gigaDelta = (gigaTarget - 60) / gigaAmt;
+        	var gigasFinal = Math.floor((game.global.world - 60) / gigaDelta);
+		if (game.upgrades.Gigastation.done >= gigasFinal) continue;
+	}
+	if (upgrade == 'Bloodlust' && game.global.challengeActive == 'Scientist' && getPageSetting('BetterAutoFight')) continue;
 
         if (!available) continue;
         if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade != 'Scientists') continue;
