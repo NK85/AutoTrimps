@@ -171,6 +171,7 @@ function initializeAllTabs() {
     createTabs("Heirlooms", "Heirloom Settings");
     createTabs("Golden", "Golden Upgrade Settings");
     createTabs("Nature", "Nature Settings");
+    createTabs("Extra", "Extra Settings");
     createTabs("Display", "Display & Spam Settings");
     createTabs("Import Export", "Import & Export Settings");
     var li_0 = document.createElement('li');
@@ -889,7 +890,16 @@ function initializeAllSettings() {
     createSetting('wc2enlightthresh', 'E: C: Wind', 'Activate Wind Enlight when Enlight cost is below this Thresh in C2s. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
     createSetting('ic2enlightthresh', 'E: C: Ice', 'Activate Ice Enlight when Enlight cost is below this Thresh in C2s. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
 
-
+    //Extra
+    
+    //Line 1
+    createSetting('SmartPrestige', 'Smart Prestige', 'Prestige Logic', 'boolean', false, null, 'Extra');
+    createSetting('PrestigePoison', ['Prestige on Poison OFF', 'Prestige on Poison ON', 'Prestige on Poison FORCE'], 'Only get prestiges on poison zones after z236, FORCE will ignore SmartPrestige after z236', 'multitoggle', 0, null, 'Extra');
+    createSetting('MapBonusPriority', 'Map Bonus Priority Multiplier', 'If both Map Bonus and farming H:D conditions are met it will ignore farming if max map bonus is not max and H:D ratio is below Map Bonus H:D * this value, -1 to disable', 'value', -1, null, 'Extra');
+    createSetting('MaxWarpstations', 'Max Warpstation', 'Will not buy warpstations after this value amount, -1 to disable', 'value', -1, null, 'Extra');
+    createSetting('WarpstationsZ', 'Dont Buy Warpstations after Z', 'Will not buy warpstations after Z is reached, -1 to disable', 'value', -1, null, 'Extra');
+    createSetting('GigastationTarget', 'Gigastation Target Zone', 'Will optimize gigastation upgrading to reach target zone with max-1 gigastations as fast as possible(will buy last gigastation on target zone so dont put your actual target zone there but the target zone for your last gigastation), -1 to disable, not recommended to put values of 230 or higher', 'value', -1, null, 'Extra');
+    createSetting('NurseryRatio', 'Nursery HP Ratio', 'will only buy nurseries if (trimps hp / strongest enemy on current zone atk) is below this ratio, -1 to disable', 'value', -1, null, 'Extra');
 
     //Display
 
