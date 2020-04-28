@@ -903,6 +903,7 @@ function initializeAllSettings() {
     
     //Line 2
     createSetting('AlternateGen', ['Alternate Generator OFF', 'Alternate Generator ON', 'Alternate Generator OVERCLOCK'], 'Alternate between fuel and magmite', 'multitoggle', 0, null, 'Extra');
+    createSetting('NoBlock', 'Dont use Block', 'Avoid using the block stance', 'boolean', false, null, 'Extra');
     
     //Display
 
