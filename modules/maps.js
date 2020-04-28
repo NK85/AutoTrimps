@@ -30,6 +30,7 @@ var spireTime=0;
 var doMaxMapBonus=!1;
 var vanillaMapatZone=!1;
 var additionalCritMulti=2<getPlayerCritChance()?25:5;
+var prestigeAmt;
 
 function updateAutoMapsStatus(get) {
 
@@ -58,7 +59,7 @@ function updateAutoMapsStatus(get) {
     else if (getPageSetting('SkipSpires') == 1 && ((game.global.challengeActive != 'Daily' && isActiveSpireAT()) || (game.global.challengeActive == 'Daily' && disActiveSpireAT()))) status = 'Skipping Spire';
     else if (doMaxMapBonus) status = 'Max Map Bonus After Zone';
     else if (!game.global.mapsUnlocked) status = '&nbsp;';
-    else if (needPrestige && !doVoids) status = 'Prestige';
+    else if (needPrestige && !doVoids) status = 'Prestige' + '\n' + prestigeAmt + ' remaining';
     else if (doVoids) {
 	    var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 	    status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
@@ -237,7 +238,15 @@ function autoMap() {
     //Prestige
     if ((getPageSetting('ForcePresZ') >= 0) && ((game.global.world + extraMapLevels) >= getPageSetting('ForcePresZ'))) {
         const prestigeList = ['Supershield', 'Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
+		const prestigeEquip = ['Shield', 'Dagger', 'Mace', 'Polearm', 'Battleaxe', 'Greatsword', 'Arbalest', 'Boots', 'Helmet', 'Pants', 'Shoulderguards', 'Breastplate', 'Gambeson'];
         needPrestige = prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world + extraMapLevels) - 5);
+		for (i in prestigeList)
+		{
+			if (game.equipment[prestigeEquip[i]].locked) continue;
+			if (game.mapUnlocks[prestigeList[i]].last <= game.global.world)
+				prestigeAmt += Math.floor((game.global.world - game.mapUnlocks[equipmentList[i].Upgrade].last) / 5);
+		}
+		if (prestigeAmt == 1 && game.global.lastClearedMapCell > 1) needPrestige = false;
     } else
         needPrestige = prestige != "Off" && game.mapUnlocks[prestige] && game.mapUnlocks[prestige].last <= (game.global.world + extraMapLevels) - 5 && game.global.challengeActive != "Frugal";
 
@@ -265,6 +274,8 @@ function autoMap() {
             skippedPrestige = !skippedPrestige;
         }
     }
+	
+	if (needPrestige && )
 
     //Calc
     var ourBaseDamage = calcOurDmg("avg", false, true);
