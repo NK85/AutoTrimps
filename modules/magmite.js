@@ -172,7 +172,7 @@ function autoMagmiteSpender() {
 }
 
 function autoGenerator() {
-	if (getPageSetting('AlternateGen')) return autoGenerator2();
+	if (getPageSetting('AlternateGen') > 0) return autoGenerator2();
 var defaultgenstate = getPageSetting('defaultgen');
 var beforefuelstate = getPageSetting('beforegen');
   if (game.global.world < 230) return;
@@ -222,9 +222,11 @@ function autoGenerator2() {
 		autoGenMagmaCells = [];
 		for (var i in game.global.gridArray) if (game.global.gridArray[i].mutation == 'Magma') autoGenMagmaCells[j++] = i;
 	}
-	var capacity = 3 + game.generatorUpgrades.Capacity.upgrades * 0.4;
-	if (game.permanentGeneratorUpgrades.Storage.owned) capacity *= 1.5;
-	if (game.global.magmaFuel >= capacity) return changeGeneratorState(0);
+	if (getPageSetting('AlternateGen') == 1) {
+		var capacity = 3 + game.generatorUpgrades.Capacity.upgrades * 0.4;
+		if (game.permanentGeneratorUpgrades.Storage.owned) capacity *= 1.5;
+		if (game.global.magmaFuel >= capacity) return changeGeneratorState(0);
+	}
 	var genMode = 1;
 	for (var i = 0; i < j; i++) if (game.global.gridArray[autoGenMagmaCells[i]].health == 0) genMode = 1 - genMode;
 	changeGeneratorState(genMode);
