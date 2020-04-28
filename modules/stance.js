@@ -141,6 +141,8 @@ function autoStance() {
     var isCritThing = isCritVoidMap || isCritDaily || isCrushed;
     var voidCritinDok = !isCritThing || oneshotFast || surviveD;
     var voidCritinXok = !isCritThing || oneshotFast || surviveX;
+	
+	var noBlock = getPageSetting('NoBlock');
 
     if (!game.global.preMapsActive && game.global.soldierHealth > 0) {
         
@@ -151,7 +153,7 @@ function autoStance() {
             
             if (game.global.formation == "0" && game.global.soldierHealth - xDamage < bHealth){
                 if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth))
-                    setFormation(3);
+                    setFormation(noBlock ? 1 : 3);
             }
             else if (xDamage == 0 || ((game.global.formation == 2 || game.global.formation == 4) && voidCritinXok)){
                 setFormation("0");
@@ -159,12 +161,12 @@ function autoStance() {
             else {
                 if (game.global.formation == "0"){
                     if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth))
-                        setFormation(3);
+                        setFormation(noBlock ? 1 : 3);
                     else
                         setFormation(1);
                 }
                 else if (game.upgrades.Barrier.done && (game.global.formation == 2 || game.global.formation == 4))
-                    setFormation(3);
+                    setFormation(noBlock ? 1 : 3);
             }
         } else if (game.upgrades.Formations.done && !xExplosionOK) {
             setFormation(1);
@@ -175,7 +177,7 @@ function autoStance() {
                 setFormation("0");
         } else if (game.upgrades.Barrier.done && surviveB) {
             if (game.global.formation != 3) {
-                setFormation(3);
+                setFormation(noBlock ? 1 : 3);
                 debug("AutoStance B/3","other");
             }
         } else {
