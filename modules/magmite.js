@@ -1,6 +1,9 @@
 MODULES["magmite"] = {};
 MODULES["magmite"].algorithm = 2;
 
+var autoGenWorld = 0;
+var autoGenMagmaCells = [];
+
 var priceIncreases = {
     Efficiency: 8,
     Capacity: 32,
@@ -119,18 +122,18 @@ function autoMagmiteSpender() {
                         return;
                     var EffObj = {};
                     EffObj.name = "Efficiency";
-                    EffObj.lvl = eff.upgrades + 1;
+                    EffObj.lvl = eff.upgrades;
                     EffObj.cost = eff.cost();
                     EffObj.benefit = EffObj.lvl * 0.1;
-                    EffObj.effInc = (((1 + EffObj.benefit) / (1 + ((EffObj.lvl - 1) * 0.1)) - 1) * 100);
+                    EffObj.effInc = 10 / (1 + EffObj.benefit)
                     EffObj.miCostPerPct = EffObj.cost / EffObj.effInc;
                     var CapObj = {};
                     CapObj.name = "Capacity";
-                    CapObj.lvl = cap.upgrades + 1;
+                    CapObj.lvl = cap.upgrades;
                     CapObj.cost = cap.cost();
                     CapObj.totalCap = 3 + (0.4 * CapObj.lvl);
                     CapObj.benefit = Math.sqrt(CapObj.totalCap);
-                    CapObj.effInc = ((CapObj.benefit / Math.sqrt(3 + (0.4 * (CapObj.lvl - 1))) - 1) * 100);
+                    CapObj.effInc = ((Math.sqrt(CapObj.totalCap + 0.4) / CapObj.benefit) - 1) * 100;
                     CapObj.miCostPerPct = CapObj.cost / CapObj.effInc;
                     var upgrade, item;
                     if (EffObj.miCostPerPct <= CapObj.miCostPerPct)
@@ -169,6 +172,7 @@ function autoMagmiteSpender() {
 }
 
 function autoGenerator() {
+	if (getPageSetting('AlternateGen')) return autoGenerator2();
 var defaultgenstate = getPageSetting('defaultgen');
 var beforefuelstate = getPageSetting('beforegen');
   if (game.global.world < 230) return;
@@ -209,3 +213,16 @@ var beforefuelstate = getPageSetting('beforegen');
   if (getPageSetting('fuelend') >= 1 && game.global.world >= getPageSetting('fuelend') && game.global.generatorMode == defaultgenstate)
       return;
   }
+
+function autoGenerator2() {
+	var j = 0;
+	if (game.global.world < autoGenWorld) autoGenWorld = game.global.world
+	if (game.global.world < 230) return;
+	if (game.global.world > autoGenWorld) {
+		autoGenMagmaCells = [];
+		for (var i in game.global.gridArray) if (game.global.gridArray[i].mutation == 'Magma') autoGenMagmaCells[j++] = i;
+	}
+	var genMode = 1;
+	for (var i = 0; i < j; i++) if (game.global.gridArray[autoGenMagmaCells[i]].health == 0) genMode = 1 - genMode;
+	changeGeneratorState(genMode);
+}
