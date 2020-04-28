@@ -900,7 +900,10 @@ function initializeAllSettings() {
     createSetting('WarpstationsZ', 'Dont Buy Warpstations after Z', 'Will not buy warpstations after Z is reached, -1 to disable', 'value', -1, null, 'Extra');
     createSetting('GigastationTarget', 'Gigastation Target Zone', 'Will optimize gigastation upgrading to reach target zone with max-1 gigastations as fast as possible(will buy last gigastation on target zone so dont put your actual target zone there but the target zone for your last gigastation), -1 to disable, not recommended to put values of 230 or higher', 'value', -1, null, 'Extra');
     createSetting('NurseryRatio', 'Nursery HP Ratio', 'will only buy nurseries if (trimps hp / strongest enemy on current zone atk) is below this ratio, -1 to disable', 'value', -1, null, 'Extra');
-
+    
+    //Line 2
+    createSetting('AlternateGen', ['Alternate Generator OFF', 'Alternate Generator ON', 'Alternate Generator OVERCLOCK'], 'Alternate between fuel and magmite', 'multitoggle', 0, null, 'Extra');
+    
     //Display
 
     //Line 1
