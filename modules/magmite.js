@@ -228,6 +228,6 @@ function autoGenerator2() {
 		if (game.global.magmaFuel >= capacity) return changeGeneratorState(0);
 	}
 	var genMode = 1;
-	for (var i = 0; i < j; i++) if (game.global.gridArray[autoGenMagmaCells[i]].health == 0) genMode = 1 - genMode;
+	for (var i = 0; i < j; i++) if (autoGenMagmaCells[i] <= game.global.lastClearedCell) genMode = 1 - genMode;
 	changeGeneratorState(genMode);
 }
