@@ -266,7 +266,7 @@ function autoMap() {
 		{
 			if (game.equipment[prestigeEquip[i]].locked) continue;
 			if (game.mapUnlocks[prestigeList[i]].last <= game.global.world)
-				prestigeAmt += Math.floor((game.global.world - game.mapUnlocks[equipmentList[i].Upgrade].last) / 5);
+				prestigeAmt += Math.floor((game.global.world - game.mapUnlocks[prestigeList[i]].last) / 5);
 		}
 		if (prestigeAmt == 1 && game.global.lastClearedMapCell > 1) needPrestige = false;
 		if (needPrestige && getPageSetting('SmartPrestige') && prestigesAvailable()) needPrestige = false;
