@@ -299,7 +299,6 @@ function autoMap() {
         }
     }
 	
-	if (needPrestige && )
 
     //Calc
     var ourBaseDamage = calcOurDmg("avg", false, true);
