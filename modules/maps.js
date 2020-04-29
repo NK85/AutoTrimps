@@ -262,6 +262,7 @@ function autoMap() {
         const prestigeList = ['Supershield', 'Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
 		const prestigeEquip = ['Shield', 'Dagger', 'Mace', 'Polearm', 'Battleaxe', 'Greatsword', 'Arbalest', 'Boots', 'Helmet', 'Pants', 'Shoulderguards', 'Breastplate', 'Gambeson'];
         needPrestige = prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world + extraMapLevels) - 5);
+		prestigeAmt = 0;
 		for (i in prestigeList)
 		{
 			if (game.equipment[prestigeEquip[i]].locked) continue;
