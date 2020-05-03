@@ -686,7 +686,7 @@ AutoPerks.initializePerks = function () {
     var bait = new AutoPerks.FixedPerk("bait", 4, 1000);
     var trumps = new AutoPerks.FixedPerk("trumps", 3, 1000);
     var packrat = new AutoPerks.FixedPerk("packrat", 3, 1000);
-	var overkill = new AutoPerks.FixedPerk("overkill", 1000000, 20, 30);
+	var overkill = new AutoPerks.FixedPerk("overkill", 1000000, 100, 30);
     //variable
 	var agility = new AutoPerks.VariablePerk("agility", 4, true,                0.5, 5.26315789473684210526315789474, 20);
 	var range = new AutoPerks.VariablePerk("range", 1, true,                    AutoPerks.damageWeigth, 1, 10);
@@ -702,7 +702,7 @@ AutoPerks.initializePerks = function () {
     var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true, 	AutoPerks.combatWeigth, 0);
     var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,  	AutoPerks.resourceWeigth / 2, 6);
     //fluffy
-    var capable = new AutoPerks.FixedPerk("capable", 100000000, 100, 10, "fluffy");
+    var capable = new AutoPerks.FixedPerk("capable", 100000000, 10, 10, "fluffy");
     var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, false,      11, 0.05);
     var curious = new AutoPerks.VariablePerk("curious", 100000000000000, false,   12, 0.05);
     var classy = new AutoPerks.VariablePerk("classy", 100000000000000000, false,   13, 0.05, 75);
