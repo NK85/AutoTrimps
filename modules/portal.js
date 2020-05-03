@@ -30,7 +30,7 @@ function autoPortal() {
 				{
 					var fluffyMult = prevFluffyHr == 0 ? 1 : (myFluffyHr / prevFluffyHr);
 					var heMult = prevHeliumHr == 0 ? 1 : (myHeliumHr / prevHeliumHr);
-					bufferExceeded = (fluffyMult * heMult) < 1;
+					bufferExceeded = (fluffyMult * heMult) < (1 - (heliumHrBuffer / 100));
 				}
 				else
 				{
