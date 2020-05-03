@@ -33,9 +33,9 @@ var additionalCritMulti=2<getPlayerCritChance()?25:5;
 var prestigeAmt;
 
 function prestigesAvailable() {
-	const prestigeList = ['Supershield', 'Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
-	var highestPrestige = ''
-	var highestRank = 0
+	const prestigeList = ['Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+	var highestPrestige = '';
+	var highestRank = 0;
 	for (var i in prestigeList) {
 		var prestige = prestigeList[i];
 		if (!game.upgrades[prestige].locked && game.upgrades[prestige].allowed > highestRank) {
@@ -44,8 +44,9 @@ function prestigesAvailable() {
 		}
 	}
 	if (highestRank < 1) return false;
+    
 	var flag = false;
-	for (var equip in prestigeList) {
+	for (var i in prestigeList) {
 		var prestige = prestigeList[i];
 		if ((game.global.highestLevelCleared < 129 || game.global.challengeActive == 'Slow') && (prestige == 'Harmbalest' || prestige == 'GambesOP')) continue;
 		if (flag && game.upgrades[prestige].locked && (game.upgrades[prestige].done < game.upgrades[highestPrestige].done)) return false;
@@ -270,6 +271,7 @@ function autoMap() {
 				prestigeAmt += Math.floor((game.global.world - game.mapUnlocks[prestigeList[i]].last) / 5);
 		}
 		if (prestigeAmt == 1 && game.global.lastClearedMapCell > 1) needPrestige = false;
+		if (prestigeAmt == 2 && game.global.mapExtraBonus == 'p') needPrestige = false;
 		if (needPrestige && getPageSetting('SmartPrestige') && prestigesAvailable()) needPrestige = false;
 		
     } else
