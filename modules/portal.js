@@ -15,10 +15,28 @@ function autoPortal() {
                 var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
                 var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
                 var myHeliumHr = game.stats.heliumHour.value();
+				var prevHeliumHr = allSaveData[allSaveData.length - 2].heliumOwned / ((allSaveData[allSaveData.length - 2].currentTime - allSaveData[allSaveData.length - 2].portalTime) / 3600000);
+				bestFluffyHr ;
+				var myFluffyHr = allSaveData[allSaveData.length - 1].fluffy / ((new Date().getTime() - allSaveData[allSaveData.length - 1].portalTime) / 3600000);
+				var prevFluffyHr = allSaveData[allSaveData.length - 2].fluffy / ((allSaveData[allSaveData.length - 2].currentTime - allSaveData[allSaveData.length - 2].portalTime) / 3600000);
                 var heliumHrBuffer = Math.abs(getPageSetting('HeliumHrBuffer'));
                 if (!aWholeNewWorld)
                     heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
-                var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
+				var bufferExceeded;
+				if (getPageSetting('FluffyPortal') == 1)
+				{
+					bufferExceeded = myFluffyHr < bestFluffyHr * (1 - (heliumHrBuffer / 100));
+				}
+				else if (getPageSetting('FluffyPortal') == 2)
+				{
+					var fluffyMult = myFluffyHr / prevFluffyHr;
+					var heMult = myHeliumHr / prevHeliumHr;
+					bufferExceeded = (fluffyMult * heMult) < 1;
+				}
+				else
+				{
+                	bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
+				}
                 if (bufferExceeded && game.global.world >= minZone) {
                     OKtoPortal = true;
                     if (aWholeNewWorld)
