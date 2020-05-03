@@ -16,7 +16,6 @@ function autoPortal() {
                 var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
                 var myHeliumHr = game.stats.heliumHour.value();
 				var prevHeliumHr = allSaveData[allSaveData.length - 2].heliumOwned / ((allSaveData[allSaveData.length - 2].currentTime - allSaveData[allSaveData.length - 2].portalTime) / 3600000);
-				bestFluffyHr ;
 				var myFluffyHr = allSaveData[allSaveData.length - 1].fluffy / ((new Date().getTime() - allSaveData[allSaveData.length - 1].portalTime) / 3600000);
 				var prevFluffyHr = allSaveData[allSaveData.length - 2].fluffy / ((allSaveData[allSaveData.length - 2].currentTime - allSaveData[allSaveData.length - 2].portalTime) / 3600000);
                 var heliumHrBuffer = Math.abs(getPageSetting('HeliumHrBuffer'));
