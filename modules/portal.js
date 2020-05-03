@@ -22,14 +22,14 @@ function autoPortal() {
                 if (!aWholeNewWorld)
                     heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
 				var bufferExceeded;
-				if (getPageSetting('FluffyPortal') == 1)
+				if (getPageSetting('FluffyPortal') == 1 && game.global.world > 300)
 				{
 					bufferExceeded = myFluffyHr < bestFluffyHr * (1 - (heliumHrBuffer / 100));
 				}
-				else if (getPageSetting('FluffyPortal') == 2)
+				else if (getPageSetting('FluffyPortal') == 2 && game.global.world > 300)
 				{
-					var fluffyMult = myFluffyHr / prevFluffyHr;
-					var heMult = myHeliumHr / prevHeliumHr;
+					var fluffyMult = prevFluffyHr == 0 ? 1 : (myFluffyHr / prevFluffyHr);
+					var heMult = prevHeliumHr == 0 ? 1 : (myHeliumHr / prevHeliumHr);
 					bufferExceeded = (fluffyMult * heMult) < 1;
 				}
 				else
