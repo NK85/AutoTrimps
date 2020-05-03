@@ -1,4 +1,5 @@
 var basepath = 'https://NK85.github.io/AutoTrimps/';
+var bestFluffyHr = 0;
 
 function safeSetItems1(name,data) {
     try {
@@ -41,6 +42,8 @@ function escapeATWindows(){var a=document.getElementById('tooltipDiv');if('none'
 function getTotalDarkEssenceCount(){return game.global.spentEssence+game.global.essence}
 
 function pushData() {
+    fluffyhr = allSaveData[allSaveData.length - 1].fluffy / ((new Date().getTime() - allSaveData[allSaveData.length - 1].portalTime) / 3600000);
+    bestFluffyHr = fluffyhr > bestFluffyHr ? fluffyhr : bestFluffyHr;
     debug2('Starting Zone ' + game.global.world, "graphs");
     var getPercent = (game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)))*100;
     var lifetime = (game.resources.helium.owned / (game.global.totalHeliumEarned-game.resources.helium.owned))*100;
