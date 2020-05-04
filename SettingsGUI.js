@@ -906,6 +906,7 @@ function initializeAllSettings() {
     createSetting('NoBlock', 'Dont use Block', 'Avoid using the block stance', 'boolean', false, null, 'Extra');
     createSetting('FluffyPortal', ['Fluffy Portal OFF', 'Fluffy Portal ON', 'Fluffy Portal MIXED'], 'Uses Fluffy exp/hr instead of he on he/hr autoportal, mixed balances both he and fluffy', 'multitoggle', 0, null, 'Extra');
     createSetting('DynamicVoids', 'Dynamic Voids', 'Will do voids the moment you stop one shotting them', 'boolean', false, null, 'Extra');
+    createSetting('SpireDeaths', 'Exit Spire after X deaths', 'Exit Spire after X deaths, > 10 to disable, < 1 to skip spire completely, doesnt respect ignore spire setting', 'value', 11, null, 'Extra');
     
     //Display
 
