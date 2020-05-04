@@ -210,7 +210,10 @@ function autoMap() {
     }
 	
 	if (getPageSetting('DynamicVoids')) {
-		needToVoid = game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell && getTrimpAttack() <= (getEnemyMaxHealth(game.global.world,50,true) * 8);
+		var dmg = calculateDamageAvg(game.global.soldierCurrentAttack, true, true);
+		if (game.global.formation == 0) dmg /= 2;
+		if (game.global.formation == 2) dmg /= 8;
+		needToVoid = game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell && dmg <= (getEnemyMaxHealth(game.global.world,50,true) * 4);
 	}
 	else {
 		needToVoid = (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
@@ -1930,4 +1933,259 @@ function RautoMap() {
             RlastMapWeWereIn = getCurrentMapObject();
         }
     }
+}
+
+function calculateDamageAvg(number, buildString, isTrimp, noCheckAchieve, cell, noFluctuation) { //number = base attack
+    var fluctuation = .2; //%fluctuation
+	var maxFluct = -1;
+	var minFluct = -1;
+	if (getPerkLevel("Equality")) number *= game.portal.Equality.getMult();
+	if (isTrimp){
+		//Situational Trimp damage increases
+		if (game.global.universe == 2 && game.buildings.Smithy.owned > 0){
+			number *= game.buildings.Smithy.getMult();
+		}
+		if (game.global.challengeActive == "Unbalance"){
+			number *= game.challenges.Unbalance.getAttackMult();
+		}
+		if (game.jobs.Amalgamator.owned > 0){
+			number *= game.jobs.Amalgamator.getDamageMult();
+		}
+		if (game.challenges.Electricity.stacks > 0) { //Electricity
+			number *= (1 - (game.challenges.Electricity.stacks * 0.1));
+		}
+		if (game.global.antiStacks > 0) {
+			number *= ((game.global.antiStacks * getPerkLevel("Anticipation") * game.portal.Anticipation.modifier) + 1);
+			updateAntiStacks();
+		}
+		if (!game.global.mapsActive && game.global.mapBonus > 0){
+			var mapBonus = game.global.mapBonus;
+			if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
+			number *= ((mapBonus * .2) + 1);
+		}
+		if (game.global.titimpLeft >= 1 && game.global.mapsActive){
+			number *= 2;
+		}
+		if (game.global.achievementBonus > 0){
+			number *= (1 + (game.global.achievementBonus / 100));
+		}
+		if (game.global.challengeActive == "Discipline" || game.global.challengeActive == "Unlucky"){
+			fluctuation = .995;
+		}
+		else if (getPerkLevel("Range") > 0){
+			minFluct = fluctuation - (.02 * getPerkLevel("Range"));
+		}
+		if (game.global.challengeActive == "Decay" || game.global.challengeActive == "Melt"){
+			var challenge = game.challenges[game.global.challengeActive];
+			number *= 5;
+			number *= Math.pow(challenge.decayValue, challenge.stacks);
+		}
+		if (game.global.roboTrimpLevel > 0){
+			number *= ((0.2 * game.global.roboTrimpLevel) + 1);
+		}
+		if (game.global.challengeActive == "Lead" && ((game.global.world % 2) == 1)){
+			number *= 1.5;
+		}
+		if (game.goldenUpgrades.Battle.currentBonus > 0){
+			number *= game.goldenUpgrades.Battle.currentBonus + 1;
+		}
+		if (game.talents.voidPower.purchased && game.global.voidBuff){
+			number *= ((game.talents.voidPower.getTotalVP() / 100) + 1);
+		}
+		if (game.global.totalSquaredReward > 0){
+			number *= ((game.global.totalSquaredReward / 100) + 1)
+		}
+		if (getEmpowerment() == "Ice"){
+			number *= 1 + game.empowerments.Ice.getDamageModifier();
+		}
+		if (game.talents.magmamancer.purchased){
+			number *= game.jobs.Magmamancer.getBonusPercent();
+		}
+		if (game.talents.stillRowing2.purchased){
+			number *= ((game.global.spireRows * 0.06) + 1);
+		}
+		if (game.talents.healthStrength.purchased && mutations.Healthy.active()){
+			number *= ((0.15 * mutations.Healthy.cellCount()) + 1);
+		}
+		if (game.global.voidBuff && game.talents.voidMastery.purchased){
+			number *= 5;
+		}
+		if (game.talents.scry.purchased && !game.global.mapsActive && isScryerBonusActive()){
+			var worldCell = getCurrentWorldCell();
+			if (worldCell.mutation == "Corruption" || worldCell.mutation == "Healthy"){
+				number *= 2;
+			}
+		}
+		if (game.talents.daily.purchased && game.global.challengeActive == "Daily"){
+			number *= 1.5;
+		}
+		if (game.global.sugarRush > 0){
+			number *= sugarRush.getAttackStrength();
+		}
+		if (game.global.challengeActive == "Life") {
+			number *= game.challenges.Life.getHealthMult();
+		}
+		if (game.singleRunBonuses.sharpTrimps.owned){
+			number *= 1.5;
+		}
+		if (game.global.mapsActive && game.talents.bionic2.purchased && getCurrentMapObject().level > game.global.world){
+			number *= 1.5;
+		}
+		if (playerSpireTraps.Strength.owned){
+			var strBonus = playerSpireTraps.Strength.getWorldBonus();
+			number *= (1 + (strBonus / 100));
+		}
+		if (getUberEmpowerment() == "Poison"){
+			number *= 3;
+		}
+		if (Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value){
+			number *= (1 + (game.stats.totalVoidMaps.value * 0.05));
+		}
+		if (getPerkLevel("Tenacity")){
+			number *= game.portal.Tenacity.getMult();
+		}
+		if (game.talents.herbalist.purchased){
+			number *= game.talents.herbalist.getBonus();
+		}
+		if (game.global.mayhemCompletions){
+			number *= game.challenges.Mayhem.getTrimpMult();
+		}
+		if (game.global.challengeActive == "Daily"){
+			if (typeof game.global.dailyChallenge.minDamage !== 'undefined'){
+				if (minFluct == -1) minFluct = fluctuation;
+				minFluct += dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength);
+			}
+			if (typeof game.global.dailyChallenge.maxDamage !== 'undefined'){
+				if (maxFluct == -1) maxFluct = fluctuation;
+				maxFluct += dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);
+			}
+			if (typeof game.global.dailyChallenge.weakness !== 'undefined'){
+				number *= dailyModifiers.weakness.getMult(game.global.dailyChallenge.weakness.strength, game.global.dailyChallenge.weakness.stacks);
+			}
+			if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1)){
+					number *= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+			}
+			if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && ((game.global.world % 2) == 0)){
+					number *= dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
+			}
+			if (typeof game.global.dailyChallenge.rampage !== 'undefined'){
+				number *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
+			}
+		}
+		if (game.global.challengeActive == "Revenge") number *= game.challenges.Revenge.getMult();
+		if (game.global.challengeActive == "Duel" && game.challenges.Duel.trimpStacks > 50) number *= 3;
+		if (game.global.challengeActive == "Quest") number *= game.challenges.Quest.getAttackMult();
+		if (game.global.challengeActive == "Quagmire") number *= game.challenges.Quagmire.getExhaustMult();
+		if (game.global.challengeActive == "Archaeology") number *= game.challenges.Archaeology.getStatMult("attack");
+		number = calcHeirloomBonus("Shield", "trimpAttack", number);
+		if (Fluffy.isActive()){
+			number *= Fluffy.getDamageModifier();
+		}
+
+
+	}
+	else {
+		//Situational Bad Guy damage increases
+		if (game.global.universe == 2) fluctuation = 0.5;
+		if (game.global.challengeActive){
+			//Challenge bonuses here
+			if (game.global.challengeActive == "Coordinate"){
+				number *= getBadCoordLevel();
+			}
+			else if (game.global.challengeActive == "Meditate"){
+				number *= 1.5;
+			}
+			else if (game.global.challengeActive == "Nom" && typeof cell.nomStacks !== 'undefined'){
+				number *= Math.pow(1.25, cell.nomStacks);
+			}
+			else if (game.global.challengeActive == "Watch") {
+				number *= 1.25;
+			}
+			else if (game.global.challengeActive == "Lead"){
+				number *= (1 + (Math.min(game.challenges.Lead.stacks, 200) * 0.04));
+			}
+			else if (game.global.challengeActive == "Scientist" && getScientistLevel() == 5) {
+				number *= 10;
+			}
+			else if (game.global.challengeActive == "Corrupted"){
+				number *= 3;
+			}
+			if (game.global.challengeActive == "Daily"){
+				if (typeof game.global.dailyChallenge.badStrength !== 'undefined'){
+					number *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
+				}
+				if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive){
+					number *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
+				}
+				if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined'){
+					number *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks)
+				}
+				if (typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive){
+					number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
+				}
+			}
+			if (game.global.challengeActive == "Duel" && game.challenges.Duel.enemyStacks > 50) number *= 3;
+			if (game.global.challengeActive == "Wither") number *= game.challenges.Wither.getEnemyAttackMult();
+			if (game.global.challengeActive == "Archaeology") number *= game.challenges.Archaeology.getStatMult("enemyAttack");
+			if (game.global.challengeActive == "Mayhem" && !game.global.mapsActive && cell && cell.level == 100) number *= game.challenges.Mayhem.getBossMult();
+		}
+		if (game.global.usingShriek) {
+			number *= game.mapUnlocks.roboTrimp.getShriekValue();
+		}
+		//Keep ice last for achievements
+		if (getEmpowerment() == "Ice"){
+			number *= game.empowerments.Ice.getCombatModifier();
+			if (number >= 0 && number < 1 && !game.global.mapsActive) giveSingleAchieve("Brr");
+		}
+		if (game.global.world >= getObsidianStart() && !game.global.mapsActive) number = Infinity;
+	}
+	if (minFluct > 1) minFluct = 1;
+	if (maxFluct == -1) maxFluct = fluctuation;
+	if (minFluct == -1) minFluct = fluctuation;
+	var min = Math.floor(number * (1 - minFluct));
+	if (noFluctuation) return min;
+	var max = Math.ceil(number + (number * maxFluct));
+	var runningUnlucky = game.global.challengeActive == "Unlucky";
+	var actuallyLucky = false;
+    if (buildString || runningUnlucky) {
+		var critMin = min;
+		var critMax = max;
+		if (isTrimp) {
+			if (noCheckAchieve) return max;
+			var critChance = getPlayerCritChance();
+			if (critChance >= 1){
+				var critDamage = getPlayerCritDamageMult();
+				number *= critDamage;
+				if (critChance >= 3) number *= getMegaCritDamageMult(3);
+				else if (critChance >= 2) number *= getMegaCritDamageMult(2);
+				critMin = Math.floor(number * (1 - minFluct));
+				critMax = Math.ceil(number + (number * maxFluct));
+			}
+			if (!buildString && isTrimp) {//Aka running unlucky but not building a string
+				if (Number(critMin.toString()[0]) % 2 == 0) actuallyLucky = true;
+				game.challenges.Unlucky.lastHitLucky = actuallyLucky;
+			}
+			else{
+				checkAchieve("damage", critMax);
+			}
+		}
+		if (buildString){ //Aka maybe running Unlucky but probably not but just building a string anyways
+			return (critMin + critMax) / 2;
+		}
+	}
+	function rollMax(){
+		return Math.floor(Math.random() * ((max + 1) - min)) + min;
+	}
+	if (runningUnlucky && isTrimp){
+		var worst = rollMax();
+		var best = worst;
+		for (var x = 0; x < 4; x++){
+			var roll = rollMax();
+			if (roll < worst) worst = roll;
+			if (roll > best) best = roll;
+		}
+		if (actuallyLucky) return best;
+		return worst;
+	}
+    return rollMax();
 }
