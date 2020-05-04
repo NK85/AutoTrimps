@@ -905,6 +905,7 @@ function initializeAllSettings() {
     createSetting('AlternateGen', ['Alternate Generator OFF', 'Alternate Generator ON', 'Alternate Generator OVERCLOCK'], 'Alternate between fuel and magmite', 'multitoggle', 0, null, 'Extra');
     createSetting('NoBlock', 'Dont use Block', 'Avoid using the block stance', 'boolean', false, null, 'Extra');
     createSetting('FluffyPortal', ['Fluffy Portal OFF', 'Fluffy Portal ON', 'Fluffy Portal MIXED'], 'Uses Fluffy exp/hr instead of he on he/hr autoportal, mixed balances both he and fluffy', 'multitoggle', 0, null, 'Extra');
+    createSetting('DynamicVoids', 'Dynamic Voids', 'Will do voids the moment you stop one shotting them', 'boolean', false, null, 'Extra');
     
     //Display
 
