@@ -208,36 +208,41 @@ function autoMap() {
     if (getPageSetting('dRunNewVoidsUntilNew') != 0 && game.global.challengeActive == "Daily") {
 	voidMapLevelPlus = getPageSetting('dRunNewVoidsUntilNew');
     }
-
-    needToVoid = (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
-			(
-			 (game.global.world == voidMapLevelSetting) ||
-			 (voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting && 
-			  (game.global.universe == 1 && 
-			   (
-			    (getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") || 
-				(getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
-			   ) ||
-			   (
-			    (getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") || 
-			    (getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
-			   )
-			  ) ||
-			  (voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting && game.global.world <= (voidMapLevelSetting + voidMapLevelPlus) &&
-			   (game.global.universe == 1 && 
-			    (
-			     (getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") || 
-				 (getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
-			    ) ||
-			    (
-			     (getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") || 
-			     (getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
-			    )
-			   )
-			  )
-			 )
-                        )
-);
+	
+	if (getPageSetting('DynamicVoids')) {
+		needToVoid = game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell && getTrimpAttack() <= (getEnemyMaxHealth(game.global.world,50,true) * 8);
+	}
+	else {
+		needToVoid = (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
+				(
+				 (game.global.world == voidMapLevelSetting) ||
+				 (voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting && 
+				  (game.global.universe == 1 && 
+				   (
+					(getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") || 
+					(getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
+				   ) ||
+				   (
+					(getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") || 
+					(getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
+				   )
+				  ) ||
+				  (voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting && game.global.world <= (voidMapLevelSetting + voidMapLevelPlus) &&
+				   (game.global.universe == 1 && 
+					(
+					 (getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") || 
+					 (getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
+					) ||
+					(
+					 (getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") || 
+					 (getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
+					)
+				   )
+				  )
+				 )
+							)
+		);
+	}
 
     var voidArrayDoneS = [];
     if (game.global.challengeActive != "Daily" && getPageSetting('onlystackedvoids') == true) {
