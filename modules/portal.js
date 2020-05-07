@@ -230,6 +230,9 @@ function doPortal(challenge) {
     if (getPageSetting('spendmagmite')==1) {
 	autoMagmiteSpender();
     }
+    if (getPageSetting('spendmagmite')==2) {
+	autoMagmiteSpender(true);
+    }
     if (getPageSetting('autoheirlooms') == true && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') {
 	autoheirlooms3();
     }
