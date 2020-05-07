@@ -79,7 +79,13 @@ function miRatio() {
 	return "Overclocker";
 }
 
-function autoMagmiteSpender() {
+function autoMagmiteSpender(portal = false) {
+	while (portal) {
+		var cheap = "Efficiency";
+		for (var i in game.generatorUpgrades) if (game.generatorUpgrades[cheap].cost() > game.generatorUpgrades[i].cost()) cheap = i;
+		if (game.generatorUpgrades[cheap].cost() <= game.global.magmite) buyGeneratorUpgrade(cheap)
+		else return;
+	}
     if (getPageSetting('ratiospend') == true) {
         var tospend = miRatio();
         var upgrader = game.generatorUpgrades[tospend];
