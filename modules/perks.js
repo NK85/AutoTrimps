@@ -504,6 +504,8 @@ AutoPerks.spendHelium2 = function(helium) {
 AutoPerks.buyT2Perks = function(helium, minEff) {
     var perks = AutoPerks.getTierIIPerks();
     var amts = [1e9,1e8,1e7,1e6,1e5,1e4,1e3,1e2,1e1];
+	var orig = [];
+	for (var i in perks) orig[i] = perks[i].level;
     for (var amti = 0; amti < amts.length; amti++) {
         var amt = amts[amti];
         var maxEff = Infinity;
@@ -523,7 +525,7 @@ AutoPerks.buyT2Perks = function(helium, minEff) {
             var price = AutoPerks.calculateTIIprice(perk, perk.level + amt) - AutoPerks.calculateTIIprice(perk, perk.level);
             if (price >= helium) {
                 for (var i in perks) {
-                    if (perks[i].level >= amt) {
+                    if (perks[i].level >= amt && perks[i].level > orig[i]) {
                         perks[i].level -= amt;
                         cost -= (AutoPerks.calculateTIIprice(perks[i], perks[i].level + amt) - AutoPerks.calculateTIIprice(perks[i], perks[i].level));
                     }
@@ -554,7 +556,7 @@ AutoPerks.buyT2Perks = function(helium, minEff) {
         for (var i in perks)
             if (perks[i].efficiency > perk.efficiency) perk = perks[i];
         if (perk.efficiency == 0) break;
-        if (perk.price < helium) {
+        if (perk.price < helium && perk.efficiency > minEff) {
             helium -= perk.price;
             perk.level++;
 			perk.price = AutoPerks.calculatePrice(perk, perk.level);
