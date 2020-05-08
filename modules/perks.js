@@ -305,6 +305,7 @@ AutoPerks.calculateIncrease = function(perk, level) {
 	}
 	else if(perk.name == "coordinated") {
 		increase = AutoPerks.getCoordIncrease(level+1);
+        if (AutoPerks.coordMax <= level) increase /= 20;
 		return increase * perk.value;
 	}
 	else if(perk.name == "carpentry_II") {
@@ -731,6 +732,9 @@ AutoPerks.initializePerks = function () {
 		else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Looting") {
 			AutoPerks.heliumWeigth = parseFloat($perkRatioBoxes[i].value);
 		}
+        else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Coordinated") {
+			AutoPerks.coordMax = parseFloat($perkRatioBoxes[i].value);
+        }
     }
 	AutoPerks.combatWeigth = AutoPerks.damageWeigth + AutoPerks.healthWeigth;
     //fixed
