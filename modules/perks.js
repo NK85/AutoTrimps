@@ -429,61 +429,58 @@ AutoPerks.spendHelium2 = function(helium) {
         debug("AutoPerks: Major Error - Helium is Not a Number!","perks");
         return false;
     }
-
-    var perks = AutoPerks.getVariablePerks();
+    
+    var perks = AutoPerks.getVariablePerks2();
 
     var effQueue = new FastPriorityQueue(function(a,b) { return a.efficiency > b.efficiency } ) // Queue that keeps most efficient purchase at the top
+
+    var mostEff, price, inc;
     for(var i in perks) {
-        var price = AutoPerks.calculatePrice(perks[i], 0);
-        var inc = AutoPerks.calculateIncrease(perks[i], 0);
+        price = AutoPerks.calculatePrice(perks[i], 0);
+        inc = AutoPerks.calculateIncrease(perks[i], 0);
         perks[i].efficiency = inc/price;
+		perks[i].price = price;
         if(perks[i].efficiency < 0) {
             debug("Perk ratios must be positive values.","perks");
+			debug(perks[i].name,"perks");
+			debug(price,"perks");
+			debug(inc,"perks");
             return false;
         }
         if(perks[i].efficiency != 0)
-            effQueue.add(perks[i]);
+            effQueue.add(perks[i]);        
     }
     if (effQueue.size < 1) {
         debug("All Perk Ratios were 0, or some other error.","perks");
         return false;
     }
 
-    var mostEff, price, inc;
-    var packPrice,packLevel;
     var i=0;
-    function iterateQueue() {
-        mostEff = effQueue.poll();
-        price = AutoPerks.calculatePrice(mostEff, mostEff.level);
-        inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
-        mostEff.efficiency = inc / price;
-        i++;
-    }
-    for (iterateQueue() ; price <= helium ; iterateQueue() ) {
-        if(mostEff.level < mostEff.max) {
-            var t2 = mostEff.name.endsWith("_II");
-            if (t2) {
-                packLevel = mostEff.increase * 10;
-                packPrice = AutoPerks.calculateTotalPrice(mostEff, mostEff.level + packLevel) - mostEff.spent;
-            }
-            if (t2 && packPrice <= helium) {
-                helium -= packPrice;
-                mostEff.level+= packLevel;
-                mostEff.spent += packPrice;
-            }  else  {
-                helium -= price;
-                mostEff.level++;
-                mostEff.spent += price;            
-            }
-            price = AutoPerks.calculatePrice(mostEff, mostEff.level);
-            inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
-            mostEff.efficiency = inc / price;
-            effQueue.add(mostEff);
-        }
-    }
+	var stuck = false;
+	while (!effQueue.isEmpty()) {
+		i++;
+		mostEff = effQueue.poll();
+        helium = AutoPerks.buyT2Perks(helium, mostEff.efficiency);
+		if(mostEff.level < mostEff.max && mostEff.price <= helium) {
+			helium -= mostEff.price;
+			mostEff.level++;
+			mostEff.spent += mostEff.price;
+			price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+			inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
+			mostEff.efficiency = inc / price;
+			mostEff.price = price;
+			effQueue.add(mostEff);
+			stuck = false;
+		}
+		else if(effQueue.size == 1) {
+			if(stuck) break;
+			stuck = true;
+		}
+	}
+    AutoPerks.buyT2Perks(helium, 0);
     debug("AutoPerks2: Pass One Complete. Loops ran: " + i, "perks");
 
-    var $selector = document.getElementById('dumpPerk');
+    /*var $selector = document.getElementById('dumpPerk');
     if ($selector != null && $selector.value != "None") {
         var heb4dump = helium;
         var index = $selector.selectedIndex;
@@ -496,28 +493,83 @@ AutoPerks.spendHelium2 = function(helium) {
             }
         }
         var dumpresults = heb4dump - helium;
-        debug("AutoPerks2: Dump Perk " + AutoPerks.capitaliseFirstLetter(dumpPerk.name) + " level post-dump: "+ dumpPerk.level + " Helium Dumped: " + prettify(dumpresults) + " He.", "perks");        
-    }
+        debug("AutoPerks1: Dump Perk " + AutoPerks.capitaliseFirstLetter(dumpPerk.name) + " level post-dump: "+ dumpPerk.level + " Helium Dumped: " + prettify(dumpresults) + " He.", "perks");        
+    }*/
     
     var heB4round2 = helium;
-    while (effQueue.size > 1) {
-        mostEff = effQueue.poll();
-        if (mostEff.level >= mostEff.max) continue;
-        price = AutoPerks.calculatePrice(mostEff, mostEff.level);
-        if (price >= helium) continue;
-        helium -= price;
-        mostEff.level++;
-        mostEff.spent += price;
-        inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
-        price = AutoPerks.calculatePrice(mostEff, mostEff.level);
-        mostEff.efficiency = inc/price;
-        effQueue.add(mostEff);
-    }
     var r2results = heB4round2 - helium;
-    debug("AutoPerks2: Pass Two Complete. Cleanup Spent Any Leftover Helium: " + prettify(r2results) + " He.","perks");
+    debug("AutoPerks2: Pass two complete. Round 2 cleanup spend of : " + prettify(r2results),"perks");
 }
 
-
+AutoPerks.buyT2Perks = function(helium, minEff) {
+    var perks = AutoPerks.getTierIIPerks();
+    var amts = [1e9,1e8,1e7,1e6,1e5,1e4,1e3,1e2,1e1];
+    for (var amti = 0; amti < amts.length; amti++) {
+        var amt = amts[amti];
+        var maxEff = Infinity;
+        for (var i in perks) {
+            perks[i].price = AutoPerks.calculatePrice(perks[i], perks[i].level);
+            perks[i].efficiency = AutoPerks.calculateIncrease(perks[i], perks[i].level);
+            perks[i].efficiency = perks[i].efficiency / perks[i].price;
+        }
+        var oldHelium = helium;
+        var cost = 0;
+        while(maxEff > minEff)
+        {
+            var perk = perks[0];
+            for (var i in perks)
+                if (perks[i].efficiency > perk.efficiency) perk = perks[i];
+            if (perk.efficiency == 0) break;
+            var price = AutoPerks.calculateTIIprice(perk, perk.level + amt) - AutoPerks.calculateTIIprice(perk, perk.level);
+            if (price >= helium) {
+                for (var i in perks) {
+                    if (perks[i].level >= amt) {
+                        perks[i].level -= amt;
+                        cost -= (AutoPerks.calculateTIIprice(perks[i], perks[i].level + amt) - AutoPerks.calculateTIIprice(perks[i], perks[i].level));
+                    }
+                }
+                break;
+            }
+            perk.level += amt;
+            perk.price = AutoPerks.calculatePrice(perk, perk.level);
+            perk.efficiency = AutoPerks.calculateIncrease(perk, perk.level);
+            perk.efficiency = perk.efficiency / perk.price;
+            if (perk.efficiency <= minEff) {
+                perk.efficiency = 0;
+                perk.level -= amt;
+                continue;
+            }
+            helium -= price;
+            cost += price;
+        }
+        helium = oldHelium - cost;
+    }
+    for (var i in perks) {
+        perks[i].price = AutoPerks.calculatePrice(perks[i], perks[i].level);
+        perks[i].efficiency = AutoPerks.calculateIncrease(perks[i], perks[i].level);
+        perks[i].efficiency = perks[i].efficiency / perks[i].price;
+    }
+    while(1) {
+        var perk = perks[0];
+        for (var i in perks)
+            if (perks[i].efficiency > perk.efficiency) perk = perks[i];
+        if (perk.efficiency == 0) break;
+        if (perk.price < helium) {
+            helium -= perk.price;
+            perk.level++;
+			perk.price = AutoPerks.calculatePrice(perk, perk.level);
+			perk.efficiency = AutoPerks.calculateIncrease(perk, perk.level);
+			perk.efficiency = perk.efficiency / perk.price;
+        }
+        else {
+            perk.efficiency = 0;
+        }
+    }
+    return helium;
+}
+        
+        
+    
 
 AutoPerks.applyCalculationsRespec = function(perks,remainingHelium){
     if (game.global.canRespecPerks) {
