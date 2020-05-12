@@ -271,8 +271,8 @@ AutoPerks.getHelium = function() {
 }
 
 AutoPerks.calculatePrice = function(perk, level) {
-    if(perk.fluffy) return Math.ceil(perk.base * Math.pow(10,level));
-    else if(perk.type == 'exponential') return Math.ceil(level/2 + perk.base * Math.pow(perk.exprate, level));
+    if(perk.fluffy && perk.max == 10) return Math.ceil(perk.base * Math.pow(10,level));
+    else if(perk.type == 'exponential' || perk.fluffy) return Math.ceil(level/2 + perk.base * Math.pow(perk.exprate, level));
     else if(perk.type == 'linear') return Math.ceil(perk.base + perk.increase * level);
 }
 AutoPerks.calculateTotalPrice = function(perk, finalLevel) {
@@ -761,9 +761,9 @@ AutoPerks.initializePerks = function () {
     var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,  	AutoPerks.resourceWeigth / 2, 6);
     //fluffy
     var capable = new AutoPerks.FixedPerk("capable", 100000000, 10, 10, "fluffy");
-    var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, false,      11, 0.05);
-    var curious = new AutoPerks.VariablePerk("curious", 100000000000000, false,   12, 0.05);
-    var classy = new AutoPerks.VariablePerk("classy", 100000000000000000, false,   13, 0.05, 75);
+    var cunning = new AutoPerks.FixedPerk("cunning", 100000000000, 100,      undefined, "fluffy");
+    var curious = new AutoPerks.FixedPerk("curious", 100000000000000, 100,   undefined, "fluffy");
+    var classy = new AutoPerks.FixedPerk("classy", 100000000000000000, 100,   75, "fluffy");
     //tier2
     var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 1, AutoPerks.healthWeigth);
     var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 1, AutoPerks.damageWeigth);
