@@ -300,7 +300,9 @@ AutoPerks.calculateIncrease = function(perk, level) {
 	}
 	else if(perk.name == "carpentry") {
 		increase = perk.baseIncrease;
-		value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
+		if (AutoPerks.getPerkByName("coordinated").level < AutoPerks.coordMax)
+			value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
+		else value = AutoPerks.resourceWeigth + (AutoPerks.combatWeigth / 20);
 		return increase * value;
 	}
 	else if(perk.name == "coordinated") {
@@ -310,7 +312,9 @@ AutoPerks.calculateIncrease = function(perk, level) {
 	}
 	else if(perk.name == "carpentry_II") {
 		increase = (perk.baseIncrease / (1 + ((perk.baseIncrease / 100) * level)));
-		value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
+		if (AutoPerks.getPerkByName("coordinated").level < AutoPerks.coordMax)
+			value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
+		else value = AutoPerks.resourceWeigth + (AutoPerks.combatWeigth / 20);
 		return increase * value;
 	}
     else if(perk.compounding) increase = perk.baseIncrease;
