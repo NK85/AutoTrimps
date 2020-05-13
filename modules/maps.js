@@ -31,6 +31,7 @@ var doMaxMapBonus=!1;
 var vanillaMapatZone=!1;
 var additionalCritMulti=2<getPlayerCritChance()?25:5;
 var prestigeAmt;
+var oldVoid = false;
 
 function prestigesAvailable() {
 	const prestigeList = ['Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
@@ -213,7 +214,23 @@ function autoMap() {
 		var dmg = calculateDamageAvg(game.global.soldierCurrentAttack, true, true);
 		if (game.global.formation == 0) dmg /= 2;
 		if (game.global.formation == 2) dmg /= 8;
-		needToVoid = game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell && dmg <= (getEnemyMaxHealth(game.global.world,50,true) * 4);
+		if (!game.global.mapsActive) {
+			dmg *= 1.65;
+			dmg /= (1 + game.global.mapBonus * 0.2);
+			if (game.global.mapBonus == 10) dmg /= 2;
+		}
+		needToVoid = false;
+		if (dmg <= (getEnemyMaxHealth(game.global.world,50,true) * 4)) {
+			if (game.global.totalVoidMaps > 0) {
+				needToVoid = game.global.lastClearedCell + 1 >= voidMapLevelSettingCell && !oldVoid;
+			}
+			else {
+				oldVoid = true;
+			}
+		}
+		else {
+			oldVoid = false;
+		}
 	}
 	else {
 		needToVoid = (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
