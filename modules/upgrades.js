@@ -14,9 +14,10 @@ function buyUpgrades() {
 	if (upgrade == 'Coordination' && (getPageSetting('BuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
 	if (upgrade == 'Coordination' && getPageSetting('amalcoord')==true) {
 		var shouldAmal = calcHDratio() < getPageSetting('amalcoordhd') || getPageSetting('amalcoordhd') < 0;
-		var shouldAmal = shouldAmal && (game.global.world < getPageSetting('amalcoordz') || getPageSetting('amalcoordz') < 0);
-		var shouldAmal = shouldAmal && (getPageSetting('amalcoordt') > game.jobs.Amalgamator.owned || getPageSetting('amalcoordt') < 0);
-		var shouldAmal = shouldAmal && ((game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend()) < 1300);
+		shouldAmal = shouldAmal && (game.global.world < getPageSetting('amalcoordz') || getPageSetting('amalcoordz') < 0);
+		shouldAmal = shouldAmal && (getPageSetting('amalcoordt') > game.jobs.Amalgamator.owned || getPageSetting('amalcoordt') < 0);
+		if ((getPageSetting('amalcoordt') == game.jobs.Amalgamator.owned)
+			shouldAmal = shouldAmal && ((game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend()) < 1300);
 		if(shouldAmal) continue;
 	}
 	
