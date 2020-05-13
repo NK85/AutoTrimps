@@ -739,6 +739,15 @@ AutoPerks.initializePerks = function () {
         else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Coordinated") {
 			AutoPerks.coordMax = parseFloat($perkRatioBoxes[i].value);
         }
+        else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Cunning") {
+			AutoPerks.cunningDivisor = 100 / parseFloat($perkRatioBoxes[i].value);
+        }
+        else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Curious") {
+			AutoPerks.curiousDivisor = 100 / parseFloat($perkRatioBoxes[i].value);
+        }
+        else if($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5) == "Classy") {
+			AutoPerks.classyDivisor = 100 / parseFloat($perkRatioBoxes[i].value);
+        }
     }
 	AutoPerks.combatWeigth = AutoPerks.damageWeigth + AutoPerks.healthWeigth;
     //fixed
@@ -765,9 +774,9 @@ AutoPerks.initializePerks = function () {
     var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,  	AutoPerks.resourceWeigth / 2, 6);
     //fluffy
     var capable = new AutoPerks.FixedPerk("capable", 100000000, 10, 10, "fluffy");
-    var cunning = new AutoPerks.FixedPerk("cunning", 100000000000, 100,      undefined, "fluffy");
-    var curious = new AutoPerks.FixedPerk("curious", 100000000000000, 100,   undefined, "fluffy");
-    var classy = new AutoPerks.FixedPerk("classy", 100000000000000000, 100,   75, "fluffy");
+    var cunning = new AutoPerks.FixedPerk("cunning", 100000000000, AutoPerks.cunningDivisor,      undefined, "fluffy");
+    var curious = new AutoPerks.FixedPerk("curious", 100000000000000, AutoPerks.curiousDivisor,   undefined, "fluffy");
+    var classy = new AutoPerks.FixedPerk("classy", 100000000000000000, AutoPerks.classyDivisor,   75, "fluffy");
     //tier2
     var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 1, AutoPerks.healthWeigth);
     var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 1, AutoPerks.damageWeigth);
