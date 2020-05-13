@@ -172,7 +172,7 @@ function mainLoop() {
         if (getPageSetting('c2runnerstart') == true && getPageSetting('c2runnerportal') > 0 && game.global.runningChallengeSquared && game.global.world > getPageSetting('c2runnerportal')) c2runnerportal();
     
         //Combat
-        if (getPageSetting('ForceAbandon') == true || getPageSetting('fuckanti') > 0) trimpcide();
+        if (getPageSetting('ForceAbandon') == true || getPageSetting('fuckanti') > 0 || true) trimpcide();
         if (getPageSetting('trimpsnotdie') == true && game.global.world > 1) helptrimpsnotdie();
         if (!game.global.fighting) {
             if (getPageSetting('fightforever') == 0) fightalways();
