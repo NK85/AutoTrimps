@@ -178,11 +178,11 @@ AutoPerks.setDefaultRatios = function() {
     var $rp = document.getElementById("ratioPreset");
     if (!$rp || !$perkRatioBoxes || !$rp.selectedOptions[0]) return;
     var ratioSet = $rp.selectedIndex;
-    var currentPerk;
+    /*var currentPerk;
     for(var i = 0; i < $perkRatioBoxes.length; i++) {
         currentPerk = AutoPerks.getPerkByName($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5)); // Remove "ratio" from the id to obtain the perk name
         $perkRatioBoxes[i].value = currentPerk.value[ratioSet];
-    }
+    }*/
     if (ratioSet == $rp.length-1) {
         var tmp = JSON.parse(localStorage.getItem('AutoPerksCustomRatios'));
         if (tmp !== null)
@@ -192,11 +192,11 @@ AutoPerks.setDefaultRatios = function() {
                 $perkRatioBoxes[i].value = 1;
             return;
         }
-        for(var i = 0; i < $perkRatioBoxes.length; i++) {
+        /*for(var i = 0; i < $perkRatioBoxes.length; i++) {
             if (AutoPerks.GUI.$customRatios[i].id != $perkRatioBoxes[i].id) continue;
             currentPerk = AutoPerks.getPerkByName($perkRatioBoxes[i].id.substring(0, $perkRatioBoxes[i].id.length - 5)); // Remove "ratio" from the id to obtain the perk name
             $perkRatioBoxes[i].value = AutoPerks.GUI.$customRatios[i].value;
-        }
+        }*/
     }
     safeSetItems('AutoperkSelectedRatioPresetID', ratioSet);
     safeSetItems('AutoperkSelectedRatioPresetName', $rp.selectedOptions[0].id);
@@ -782,7 +782,7 @@ AutoPerks.initializePerks = function () {
         AutoPerks.perkHolder[i].updatedValue = AutoPerks.perkHolder[i].value;
     }
     AutoPerks.setPerksByName();
-    //AutoPerks.setDefaultRatios();      
+    AutoPerks.setDefaultRatios();      
 }
 
 AutoPerks.getFixedPerks = function() {
