@@ -12,7 +12,13 @@ function buyUpgrades() {
 		
 	//Coord & Amals
 	if (upgrade == 'Coordination' && (getPageSetting('BuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
-	if (upgrade == 'Coordination' && getPageSetting('amalcoord')==true && getPageSetting('amalcoordhd') > 0 && calcHDratio() < getPageSetting('amalcoordhd') && ((getPageSetting('amalcoordt') < 0 && (game.global.world < getPageSetting('amalcoordz') || getPageSetting('amalcoordz') < 0)) || (getPageSetting('amalcoordt') > 0 && getPageSetting('amalcoordt') > game.jobs.Amalgamator.owned && (game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend()) > 2000))) continue;
+	if (upgrade == 'Coordination' && getPageSetting('amalcoord')==true) {
+		var shouldAmal = calcHDratio() < getPageSetting('amalcoordhd') || getPageSetting('amalcoordhd') < 0;
+		var shouldAmal = shouldAmal && (game.global.world < getPageSetting('amalcoordz') || getPageSetting('amalcoordz') < 0);
+		var shouldAmal = shouldAmal && (getPageSetting('amalcoordt') > game.jobs.Amalgamator.owned || getPageSetting('amalcoordt') < 0);
+		var shouldAmal = shouldAmal && ((game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend()) < 1300);
+		if(shouldAmal) continue;
+	}
 	
 	//WS
 	if (
