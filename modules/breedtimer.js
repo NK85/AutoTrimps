@@ -142,7 +142,7 @@ function abandonVoidMap() {
 }
 
 function forceAbandonTrimps() {
-    if (!getPageSetting('ForceAbandon')) return;
+    if (!getPageSetting('ForceAbandon') && game.jobs.Amalgamator.owned == 0) return;
     if (!game.global.mapsUnlocked) return;
     if (game.global.mapsActive && getCurrentMapObject().location == "Void") return;
     if (game.global.preMapsActive) return;
