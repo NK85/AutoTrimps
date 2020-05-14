@@ -214,7 +214,7 @@ function buyBuildings() {
     if (game.buildings.Nursery.locked == 0 && (!hidebuild &&( game.global.world >= getPageSetting('NoNurseriesUntil') || getPageSetting('NoNurseriesUntil') < 1) && (getPageSetting('MaxNursery') > game.buildings.Nursery.owned || getPageSetting('MaxNursery') == -1)) || (game.global.challengeActive != "Daily" && getPageSetting('PreSpireNurseries') > game.buildings.Nursery.owned && isActiveSpireAT()) || (game.global.challengeActive == "Daily" && getPageSetting('dPreSpireNurseries') > game.buildings.Nursery.owned && disActiveSpireAT())) {
 		var strongestAttack = getEnemyMaxAttack(game.global.world,100,'Improbability',0,0) * getCorruptScale("attack");
 		var nurseryRatio = game.global.soldierHealthMax / strongestAttack;
-		if(getPageSetting('NurseryRatio') == -1 || nurseryRatio < getPageSetting('NurseryRatio'))
+		if(getPageSetting('NurseryRatio') == -1 || nurseryRatio < getPageSetting('NurseryRatio') || (getPageSetting('PreSpireNurseries') > game.buildings.Nursery.owned && isActiveSpireAT()))
 			safeBuyBuilding('Nursery');
     }
 
