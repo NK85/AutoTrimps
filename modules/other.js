@@ -1456,6 +1456,7 @@ function BWraiding() {
 		var id = game.global.currentMapId;
 		for (var i = game.global.mapsOwned - 1; i > 0; i--) if (game.global.mapsOwnedArray[i].id == id && game.global.mapsOwnedArray[i].name.substring(0,6) == "Bionic")
 			currentBW = game.global.mapsOwnedArray[i];
+	}
 	if(currentBW != null && currentBW.level > targetBW) {
 		mapsClicked();
 		if (game.global.mapsActive) mapsClicked();
@@ -1770,7 +1771,7 @@ function dailyBWraiding() {
  	     if (!game.global.repeatMap && !dbwraided && !dfailbwraid && game.global.mapsActive) {
 		 repeatClicked();
 		 }
- 	     if (findLastBionic().level > getPageSetting('dBWraidingmax') && !dbwraided && !dfailbwraid) {
+ 	     if (findLastBionic().level > getPageSetting('d]idingmax') && !dbwraided && !dfailbwraid) {
                  dbwraided = true;
             	 dfailbwraid = false;
 		 dbwraidon = false;
