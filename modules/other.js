@@ -1424,6 +1424,8 @@ function BWraiding() {
   var targetBW;
   var bwIndex;
   var cell;
+	var currentBW = null;
+	var bwClears = null;
 
   if (game.global.challengeActive == "Daily") {
     bwraidZ = 'dBWraidingz';
@@ -1437,12 +1439,28 @@ function BWraiding() {
     bwraidMax = 'BWraidingmax';
     cell = ((getPageSetting('bwraidcell') > 0) ? getPageSetting('bwraidcell') : 1);
   }
-
+	
   isBWRaidZ = getPageSetting(bwraidZ).includes(game.global.world) && ((game.global.lastClearedCell+1) >= cell);
   bwIndex = getPageSetting(bwraidZ).indexOf(game.global.world);
-  if (bwIndex == -1 || typeof(getPageSetting(bwraidMax)[bwIndex]) === "undefined") targetBW = -1;
-  else targetBW = getPageSetting(bwraidMax)[bwIndex];
-
+  if (bwIndex == -1 || typeof(getPageSetting(bwraidMax)[bwIndex]) === "undefined") {
+	  targetBW = -1;
+	  bwClears = null;
+  }
+  else {
+	  targetBW = getPageSetting(bwraidMax)[bwIndex];
+	  if(getPageSetting('bwraidClears')) bwClears = getPageSetting('bwraidClears')[bwIndex];
+	  if(bwClears == -1) bwClears = null;
+  }
+	
+	if(isBWRaidZ && game.global.mapsActive) {
+		var id = game.global.currentMapId;
+		for (var i = game.global.mapsOwned - 1; i > 0; i--) if (game.global.mapsOwnedArray[i].id == id && game.global.mapsOwnedArray[i].name.substring(0,6) == "Bionic")
+			currentBW = game.global.mapsOwnedArray[i];
+	if(currentBW != null && currentBW.level > targetBW) {
+		mapsClicked();
+		if (game.global.mapsActive) mapsClicked();
+		recycleMap()
+	}
   if (isBWRaidZ && !bwraided && !failbwraid && getPageSetting(bwraidSetting)) {
     if (getPageSetting('AutoMaps') == 1 && !bwraided && !failbwraid) {
       autoTrimpSettings["AutoMaps"].value = 0;
