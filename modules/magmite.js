@@ -81,10 +81,11 @@ function miRatio() {
 
 function autoMagmiteSpender(portal = false) {
 	while (portal) {
-		var cheap = "Efficiency";
-		for (var i in game.generatorUpgrades) if (game.generatorUpgrades[cheap].cost() > game.generatorUpgrades[i].cost()) cheap = i;
-		if (game.generatorUpgrades[cheap].cost() <= game.global.magmite) buyGeneratorUpgrade(cheap)
-		else return;
+		while (game.generatorUpgrades.Efficiency.cost() <= game.global.magmite) buyGeneratorUpgrade("Efficiency");
+		while (game.generatorUpgrades.Capacity.cost() <= game.global.magmite) buyGeneratorUpgrade("Capacity");
+		while (game.generatorUpgrades.Supply.cost() <= game.global.magmite) buyGeneratorUpgrade("Supply");
+		while (game.generatorUpgrades.Overclocker.cost() <= game.global.magmite) buyGeneratorUpgrade("Overclocker");
+		return;
 	}
     if (getPageSetting('ratiospend') == true) {
         var tospend = miRatio();
