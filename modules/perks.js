@@ -240,7 +240,10 @@ AutoPerks.clickAllocate = function() {
     }
     if (preSpentHe)
         debug("AutoPerks: Your existing fixed-perks reserve Helium: " + prettify(preSpentHe), "perks");
-	
+	if (AutoPerks.classyDivisor != Infinity) {
+		var fluffyhe = helium / AutoPerks.classyDivisor;
+		preSpentHe += AutoPerks.spendFluffy(fluffyhe);
+	}
 	var remainingHelium = 0;
     if (!Number.isSafeInteger(helium)) {
         remainingHelium = (helium - preSpentHe) * 0.999999;
@@ -300,22 +303,49 @@ AutoPerks.calculateIncrease = function(perk, level) {
 	}
 	else if(perk.name == "carpentry") {
 		increase = perk.baseIncrease;
-		if (AutoPerks.getPerkByName("coordinated").level < AutoPerks.coordMax)
+		if (AutoPerks.getPerkByName("coordinated").level < AutoPerks.coordMax) {
 			value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
-		else value = AutoPerks.resourceWeigth + (AutoPerks.combatWeigth / 20);
-		return increase * value;
+			return increase * value;
+		}
+		else {
+			var increasem = (increase / 100) + 1;
+			var increasem = Math.pow(increasem,0.05869708635189374736042966951021);
+			var increasem = increasem * 100 - 100;
+			return increase * AutoPerks.resourceWeigth + increasem * AutoPerks.combatWeigth;
+		}
 	}
 	else if(perk.name == "coordinated") {
 		increase = AutoPerks.getCoordIncrease(level+1);
-        if (AutoPerks.coordMax <= level) increase /= 20;
+        if (AutoPerks.coordMax <= level) {
+			var increasem = (increase / 100) + 1;
+			var increasem = Math.pow(increasem,0.05869708635189374736042966951021);
+			increase = increasem * 100 - 100;
+		}
 		return increase * perk.value;
 	}
 	else if(perk.name == "carpentry_II") {
 		increase = (perk.baseIncrease / (1 + ((perk.baseIncrease / 100) * level)));
-		if (AutoPerks.getPerkByName("coordinated").level < AutoPerks.coordMax)
+		if (AutoPerks.getPerkByName("coordinated").level < AutoPerks.coordMax) {
 			value = (AutoPerks.resourceWeigth + ((AutoPerks.combatWeigth / Math.pow(0.98, AutoPerks.getPerkByName("coordinated").level))));
-		else value = AutoPerks.resourceWeigth + (AutoPerks.combatWeigth / 20);
-		return increase * value;
+			return increase * value;
+		}
+		else {
+			var increasem = (increase / 100) + 1;
+			var increasem = Math.pow(increasem,0.05869708635189374736042966951021);
+			var increasem = increasem * 100 - 100;
+			return increase * AutoPerks.resourceWeigth + increasem * AutoPerks.combatWeigth;
+		}
+	}
+	else if(perk.name == "curious") {
+		var old = 50 + 60 * level;
+		var im = ((old + 60) / old);
+		return ((im * 100) - 100);
+	}
+	else if(perk.name == "classy") {
+		return AutoPerks.getClassyIncrease(level);
+	}
+	else if(perk.name == "cunning") {
+		return (25 / (1 + ((25 / 100) * level)));
 	}
     else if(perk.compounding) increase = perk.baseIncrease;
 	else increase = (perk.baseIncrease / (1 + ((perk.baseIncrease / 100) * level)));
@@ -342,6 +372,22 @@ AutoPerks.getCoordIncrease = function(level) {
 	}
 	rt[0] *= 100
    	return rt[0] / rt[1] - 100
+}
+	
+AutoPerks.getClassyIncrease = function(level) {
+	var rt = [0,0];
+	var z = Math.floor(game.global.highestLevelCleared * 0.8);
+	z -= 301;
+	z += (level * 3);
+	for (var i = 0; i < z; i++) {
+		rt[0] += Math.pow(1.015,i+1);
+	}
+	rt[1] = rt[0];
+	for (var i = z; i < (z + 3); i++) {
+		rt[1] += Math.pow(1.015,i+1);
+	}
+	rt[1] *= 100;
+   	return rt[1] / rt[0] - 100;
 }
 
 AutoPerks.spendHelium = function(helium) {
@@ -504,6 +550,65 @@ AutoPerks.spendHelium2 = function(helium) {
     var heB4round2 = helium;
     var r2results = heB4round2 - helium;
     debug("AutoPerks2: Pass two complete. Round 2 cleanup spend of : " + prettify(r2results),"perks");
+}
+	
+AutoPerks.spendFluffy = function(helium) {
+    if(helium < 0) {
+        debug("AutoPerks: Major Error - Not enough helium to buy fixed perks.","perks");
+        return false;
+    }
+    if (Number.isNaN(helium)) {
+        debug("AutoPerks: Major Error - Helium is Not a Number!","perks");
+        return false;
+    }
+    
+    var perks = AutoPerks.getFluffyPerks();
+
+    var effQueue = new FastPriorityQueue(function(a,b) { return a.efficiency > b.efficiency } ) // Queue that keeps most efficient purchase at the top
+
+    var mostEff, price, inc;
+    for(var i in perks) {
+        price = AutoPerks.calculatePrice(perks[i], 0);
+        inc = AutoPerks.calculateIncrease(perks[i], 0);
+        perks[i].efficiency = inc/price;
+		perks[i].price = price;
+        if(perks[i].efficiency < 0) {
+            debug("Perk ratios must be positive values.","perks");
+			debug(perks[i].name,"perks");
+			debug(price,"perks");
+			debug(inc,"perks");
+            return false;
+        }
+        if(perks[i].efficiency != 0)
+            effQueue.add(perks[i]);        
+    }
+    if (effQueue.size < 1) {
+        debug("All Perk Ratios were 0, or some other error.","perks");
+        return false;
+    }
+
+    var i=0;
+	var stuck = false;
+	while (!effQueue.isEmpty()) {
+		i++;
+		mostEff = effQueue.poll();
+		if(mostEff.level < mostEff.max && mostEff.price <= helium) {
+			helium -= mostEff.price;
+			mostEff.level++;
+			mostEff.spent += mostEff.price;
+			price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+			inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
+			mostEff.efficiency = inc / price;
+			mostEff.price = price;
+			effQueue.add(mostEff);
+			stuck = false;
+		}
+		else if(effQueue.size == 1) {
+			if(stuck) break;
+			stuck = true;
+		}
+	}
+
 }
 
 AutoPerks.buyT2Perks = function(helium, minEff) {
@@ -774,9 +879,9 @@ AutoPerks.initializePerks = function () {
     var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,  	AutoPerks.resourceWeigth / 2, 6);
     //fluffy
     var capable = new AutoPerks.FixedPerk("capable", 100000000, 10, 10, "fluffy");
-    var cunning = new AutoPerks.FixedPerk("cunning", 100000000000, AutoPerks.cunningDivisor,      undefined, "fluffy");
-    var curious = new AutoPerks.FixedPerk("curious", 100000000000000, AutoPerks.curiousDivisor,   undefined, "fluffy");
-    var classy = new AutoPerks.FixedPerk("classy", 100000000000000000, AutoPerks.classyDivisor,   75, "fluffy");
+    var cunning = new AutoPerks.FixedPerk("cunning", 100000000000, AutoPerks.classyDivisor == Infinity ? AutoPerks.cunningDivisor : 0,      undefined, "fluffy");
+    var curious = new AutoPerks.FixedPerk("curious", 100000000000000, AutoPerks.classyDivisor == Infinity ? AutoPerks.curiousDivisor : 0,   undefined, "fluffy");
+    var classy = new AutoPerks.FixedPerk("classy", 100000000000000000, 0,   75, "fluffy");
     //tier2
     var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 1, AutoPerks.healthWeigth);
     var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 1, AutoPerks.damageWeigth);
@@ -817,6 +922,17 @@ AutoPerks.getTierIIPerks = function() {
 }
 AutoPerks.getAllPerks = function() {
     return AutoPerks.getSomePerks(null,null,null,true);
+}
+AutoPerks.getFluffyPerks = function() {
+	var perks = [];
+    for(var i in AutoPerks.perkHolder) {
+        var name = AutoPerks.capitaliseFirstLetter(AutoPerks.perkHolder[i].name);
+        var perk = game.portal[name];
+        if(perk.locked || (typeof perk.level === 'undefined')) continue;
+        if (AutoPerks.perkHolder[i].fluffy && AutoPerks.perkHolder[i].max != 10)
+        {   perks.push(AutoPerks.perkHolder[i]);    }
+    }
+    return perks;
 }
 AutoPerks.getSomePerks = function(fixed,variable,tier2,allperks) {
     var perks = [];
